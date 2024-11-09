@@ -4,8 +4,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 
 import com.andyslab.geobud.data.remote.RetrofitInstance
-import com.andyslab.geobud.data.local.Countries
-import com.andyslab.geobud.data.model.PlayerDto
+import com.andyslab.geobud.data.app.Countries
+import com.andyslab.geobud.data.app.LandmarkPacks.Companion.LANDMARKS
+import com.andyslab.geobud.data.model.PlayerModel
 import com.andyslab.geobud.utils.Resource
 import com.bumptech.glide.Glide
 import com.bumptech.glide.annotation.GlideModule
@@ -18,7 +19,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
 
@@ -34,34 +34,17 @@ import kotlin.random.Random
 
 @GlideModule
 class LandmarksRepoImpl(private val context: Context) : LandmarksRepository, AppGlideModule(){
+    override fun updatePlayerData(player: PlayerModel,){
+        player.progress++
+        val landmark = LANDMARKS[player.progress]
+        player.currentLandmark = landmark
 
-    override fun updatePlayerData(player: PlayerDto,){
-        var isNewPack = false
-        var currentPack = player.packs[player.position.x]
-        player.position.y++
-
-            if(player.position.y >= currentPack.size){
-                player.position.x++
-                player.position.y = 0
-                isNewPack = true
-            }
-
-
-        if((player.position.x < player.packs.size) && player.position.y < (player.packs.last().size)){
-            val landmark = player.packs[player.position.x].elementAt(player.position.y)
-            player.currentLandmark = landmark
-
-            val previousPhoto = player.photoURLs.first()
-            player.photoURLs.remove(previousPhoto)
-            player.currentLandmarkPhoto = player.photoURLs.first()
-
-            player.coins+=15
-            player.stars+=1
-        }
-
+        val previousPhoto = player.photoURLs.first()
+        player.photoURLs.remove(previousPhoto)
+        player.currentLandmarkPhoto = player.photoURLs.first()
     }
 
-    override suspend fun getLandmarkPhotoURLs(player: PlayerDto): Flow<Resource<MutableSet<String?>>> {
+    override suspend fun getLandmarkPhotoURLs(player: PlayerModel): Flow<Resource<MutableSet<String?>>> {
         return flow {
             var isError = false
             emit(Resource.Loading())
@@ -71,11 +54,11 @@ class LandmarksRepoImpl(private val context: Context) : LandmarksRepository, App
             val result = mutableSetOf<String?>()
 
             try{
-                for(currPack in listOf(player.packs[0], player.packs[1])){
-                    for(j in 0 until(currPack.size)){
+
+                    for(j in 0 until(21)){
                         val page = Random.nextInt(1, 6)
 
-                        val response = RetrofitInstance.api.getLandmarkPhoto(currPack.elementAt(j).name, page)
+                        val response = RetrofitInstance.api.getLandmarkPhoto(LANDMARKS.elementAt(j).name, page)
                         emit(Resource.Loading(data = result))
 
                         if(response.isSuccessful && response != null){
@@ -89,7 +72,7 @@ class LandmarksRepoImpl(private val context: Context) : LandmarksRepository, App
                             break
                         }
                     }
-                }
+
 
         }
             catch(e: IOException){
@@ -109,13 +92,13 @@ class LandmarksRepoImpl(private val context: Context) : LandmarksRepository, App
         }
     }
 
-    override suspend fun checkAndUpdatePhotoURLs(player: PlayerDto): Flow<Resource<MutableSet<String?>>> {
+    override suspend fun checkAndUpdatePhotoURLs(player: PlayerModel): Flow<Resource<MutableSet<String?>>> {
         return flow{
 
        }
     }
 
-    override suspend fun downloadAndCachePhotos(player: PlayerDto): Flow<Resource<Unit>> {
+    override suspend fun downloadAndCachePhotos(player: PlayerModel): Flow<Resource<Unit>> {
         var emitError = false
         return flow{
         emit(Resource.Loading())
@@ -202,7 +185,7 @@ class LandmarksRepoImpl(private val context: Context) : LandmarksRepository, App
     }
 
 
-    override fun generateOptions(player: PlayerDto): MutableSet<String> {
+    override fun generateOptions(player: PlayerModel): MutableSet<String> {
         var result = mutableSetOf<String>()
         val country = player.currentLandmark.country
         result.add(country)

@@ -1,4 +1,4 @@
-package com.andyslab.geobud.ui.loading
+package com.andyslab.geobud.ui.menu
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

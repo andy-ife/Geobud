@@ -1,4 +1,4 @@
-package com.andyslab.geobud.ui.mainmenu
+package com.andyslab.geobud.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
-import com.andyslab.geobud.utils.composeextensions.onClickWithScaleAnim
+import com.andyslab.geobud.utils.onClickWithScaleAnim
 
 
 @Composable

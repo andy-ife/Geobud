@@ -1,4 +1,4 @@
-package com.andyslab.geobud.ui.loading
+package com.andyslab.geobud.ui.menu
 
 
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.andyslab.geobud.R
+import com.andyslab.geobud.component.ErrorDialog
 import com.andyslab.geobud.ui.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -89,7 +90,7 @@ fun LoadingScreen(navController: NavController) {
             loadingProgress = it
             if (hasURLs.value && hasPhotos.value) {
                 delay(200)
-                navController.navigate(Screen.MainMenuScreen.route) {
+                navController.navigate(Screen.LandmarksQuizScreen.route) {
                     popUpTo(Screen.LoadingScreen.route) {
                         inclusive = true
                     }

@@ -3,15 +3,10 @@ package com.andyslab.geobud
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.navigation.compose.rememberNavController
-import com.andyslab.geobud.ui.loading.LoadingScreen
-import com.andyslab.geobud.ui.loading.RootNavGraph
-import com.andyslab.geobud.ui.mainmenu.MainMenuScreen
+import com.andyslab.geobud.ui.nav.RootNavGraph
 
 
 class MainActivity : ComponentActivity() {

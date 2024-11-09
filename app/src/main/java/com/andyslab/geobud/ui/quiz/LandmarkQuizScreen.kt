@@ -1,10 +1,9 @@
-package com.andyslab.geobud.ui.landmarkquiz
+package com.andyslab.geobud.ui.quiz
 import android.view.MotionEvent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -53,19 +52,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -76,9 +71,10 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andyslab.geobud.R
 import com.andyslab.geobud.data.model.Landmark
+import com.andyslab.geobud.component.CorrectAnswerBottomSheet
 import com.andyslab.geobud.ui.Screen
-import com.andyslab.geobud.ui.mainmenu.TopBarItem
-import com.andyslab.geobud.utils.composeextensions.shimmerLoadingEffect
+import com.andyslab.geobud.component.TopBarItem
+import com.andyslab.geobud.utils.shimmerLoadingEffect
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import kotlinx.coroutines.delay
@@ -176,7 +172,8 @@ fun LandmarkQuizScreen(navController: NavController){
             imageLoading = true
             correctAnswer.value = false //make launched effect run again
         }
-    )},
+    )
+    },
         modifier = Modifier.fillMaxSize(),
         scaffoldState = scaffoldState,
         sheetPeekHeight = 0.dp,
@@ -244,8 +241,8 @@ fun LandmarkQuizScreen(navController: NavController){
                     modifier = Modifier
                         .size(40.dp)
                         .clickable {
-                            navController.navigate(Screen.MainMenuScreen.route) {
-                                popUpTo(Screen.MainMenuScreen.route) {
+                            navController.navigate(Screen.LoadingScreen.route) {
+                                popUpTo(Screen.LoadingScreen.route) {
                                     inclusive = true
                                 }
                             }

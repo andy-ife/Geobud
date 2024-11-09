@@ -1,4 +1,4 @@
-package com.andyslab.geobud.ui.landmarkquiz
+package com.andyslab.geobud.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
 import com.andyslab.geobud.data.model.Landmark
-import com.andyslab.geobud.utils.composeextensions.onClickWithScaleAnim
+import com.andyslab.geobud.utils.onClickWithScaleAnim
 
 
 @Composable

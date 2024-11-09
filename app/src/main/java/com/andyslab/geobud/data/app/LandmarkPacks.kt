@@ -1,11 +1,11 @@
-package com.andyslab.geobud.data.local
+package com.andyslab.geobud.data.app
 
 import com.andyslab.geobud.data.model.Landmark
 
 sealed class LandmarkPacks {
     companion object{
-        val packs = listOf(
-        setOf(
+        val LANDMARKS = listOf(
+
             Landmark("eiffel tower","France","EU",
                 "Champ de Mars, Paris",
                 "The Eiffel Tower has been repainted various different colors over the years" +
@@ -51,9 +51,9 @@ sealed class LandmarkPacks {
             Landmark("machu picchu","Peru","SA", "Andes Mountains",
                 "The Incas used very little mortar in Machu Picchu construction" +
                         ". They used a special technique called ashlar, which requires " +
-                        "stones cut so precisely that there is virtually no space between joints."),),
+                        "stones cut so precisely that there is virtually no space between joints."),
 
-            setOf(
+
                 Landmark("christ the redeemer","Brazil","SA"),
                 Landmark("colosseum","Italy","EU"),
                 Landmark("big ben","England","EU"),
@@ -68,9 +68,9 @@ sealed class LandmarkPacks {
                 Landmark("mount rushmore","United States of America","NA"),
                 Landmark("uluru","Australia","OC"),
                 Landmark("stonehenge","England","EU"),
-                Landmark("mount kilimanjaro","Tanzania","AF"),),
+                Landmark("mount kilimanjaro","Tanzania","AF"),
 
-            setOf(
+
                 Landmark("moai","Easter Island","SA"),
                 Landmark("machu picchu","Peru","SA"),
                 Landmark("alhambra","Spain","EU"),
@@ -90,9 +90,9 @@ sealed class LandmarkPacks {
                 Landmark("great wall of china", "China","AS"),
                 Landmark("aloba arch","Chad","AF"),
                 Landmark("antelope canyon","United States of America","NA"),
-                Landmark("table mountain","South Africa","AF"),),
+                Landmark("table mountain","South Africa","AF"),
 
-            setOf(
+
                 Landmark("st pauls cathedral","England","EU",),
                 Landmark("palace of the versailles","France","EU"),
                 Landmark("chichen itza","Mexico","NA",),
@@ -119,7 +119,7 @@ sealed class LandmarkPacks {
                 Landmark("dom luis bridge","Portugal","EU"),
                 Landmark("tulum ruins","Mexico","SA"),
                 Landmark("victoria falls","Zimbabwe","AF"),
-                Landmark("sahara desert","North Africa","AF")
-        ),)
+                Landmark("sahara desert","North Africa","AF"))
+
     }
 }

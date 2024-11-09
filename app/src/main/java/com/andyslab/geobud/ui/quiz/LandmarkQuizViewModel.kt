@@ -1,4 +1,4 @@
-package com.andyslab.geobud.ui.landmarkquiz
+package com.andyslab.geobud.ui.quiz
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.local.Player
 import com.andyslab.geobud.data.repository.LandmarksRepoImpl
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

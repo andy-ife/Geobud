@@ -1,4 +1,4 @@
-package com.andyslab.geobud.data.local
+package com.andyslab.geobud.data.app
 
 sealed class Countries {
     companion object{

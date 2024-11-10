@@ -1,4 +1,4 @@
-package com.andyslab.geobud.component
+package com.andyslab.geobud.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
-import com.andyslab.geobud.data.model.Landmark
+import com.andyslab.geobud.data.model.LandmarkModel
 import com.andyslab.geobud.utils.onClickWithScaleAnim
 
 
@@ -46,7 +46,7 @@ fun CorrectAnswerBottomSheet(
     exclamation: String,
     addedCoins: Int,
     addedStars: Int,
-    landmark: Landmark,
+    landmark: LandmarkModel,
     continueButtonClick: () -> Unit = {},
     ){
 
@@ -175,7 +175,7 @@ fun CorrectAnsBottomSheetPreview(){
         exclamation = "Nice!",
         addedCoins = 20,
         addedStars = 1,
-        landmark = Landmark("christ the redeemer",
+        landmark = LandmarkModel("christ the redeemer",
             "Brazil",
             "SA",
             "Rio de Janeiro",

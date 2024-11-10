@@ -38,11 +38,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.andyslab.geobud.R
-import com.andyslab.geobud.component.ErrorDialog
+import com.andyslab.geobud.ui.components.ErrorDialog
 import com.andyslab.geobud.ui.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,9 +53,9 @@ import kotlinx.coroutines.launch
 var key = true
 
 @Composable
-fun LoadingScreen(navController: NavController) {
+fun MenuScreen(navController: NavController) {
     val context = LocalContext.current
-    val viewModel = LoadingScreenViewModel(context)
+    val viewModel = MenuViewModel(context)
     var loadingProgress by remember {
         mutableFloatStateOf(0f)
     }
@@ -66,8 +68,8 @@ fun LoadingScreen(navController: NavController) {
         visibilityThreshold = 0.001f,
         label = "loading bar anim"
     )
-    val hasURLs = viewModel.hasPhotoURLs
-    val hasPhotos = viewModel.hasDownloadedPhotos
+//    val hasURLs = viewModel.hasPhotoURLs
+//    val hasPhotos = viewModel.hasDownloadedPhotos
 
     var showError by remember{
         mutableStateOf("")
@@ -77,27 +79,27 @@ fun LoadingScreen(navController: NavController) {
 
     //launched effect has two collectors, one collects loading errors,
     //the other collects loading progress increments
-    LaunchedEffect(key1 = key) {
-        viewModel.doLoading()
-
-        niftyScope.launch {
-            viewModel.showErrorDialog.collect{
-                showError = it
-            }
-        }
-
-        viewModel.loadProgress.collect {
-            loadingProgress = it
-            if (hasURLs.value && hasPhotos.value) {
-                delay(200)
-                navController.navigate(Screen.LandmarksQuizScreen.route) {
-                    popUpTo(Screen.LoadingScreen.route) {
-                        inclusive = true
-                    }
-                }
-            }
-        }
-    }
+//    LaunchedEffect(key1 = key) {
+//        viewModel.doLoading()
+//
+//        niftyScope.launch {
+//            viewModel.showErrorDialog.collect{
+//                showError = it
+//            }
+//        }
+//
+//        viewModel.loadProgress.collect {
+//            loadingProgress = it
+//            if (hasURLs.value && hasPhotos.value) {
+//                delay(200)
+//                navController.navigate(Screen.LandmarksQuizScreen.route) {
+//                    popUpTo(Screen.LoadingScreen.route) {
+//                        inclusive = true
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 
     Box(
@@ -153,13 +155,18 @@ fun LoadingScreen(navController: NavController) {
             ErrorDialog(
                 modifier = Modifier.align(Alignment.Center),
                 message = showError) {
-                viewModel.retryLoading()
+                //viewModel.retryLoading()
                 showError = ""
                 key = !key//to make launched effect run again.
             }
         }
     }
+}
 
+@Preview
+@Composable
+fun MenuScreenPreview(){
+    MenuScreen(rememberNavController())
 }
 
 

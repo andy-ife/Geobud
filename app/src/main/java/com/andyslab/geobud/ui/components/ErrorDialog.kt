@@ -1,4 +1,4 @@
-package com.andyslab.geobud.component
+package com.andyslab.geobud.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

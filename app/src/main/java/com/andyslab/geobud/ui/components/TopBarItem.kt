@@ -1,4 +1,4 @@
-package com.andyslab.geobud.component
+package com.andyslab.geobud.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

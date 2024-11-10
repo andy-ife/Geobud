@@ -70,10 +70,10 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andyslab.geobud.R
-import com.andyslab.geobud.data.model.Landmark
-import com.andyslab.geobud.component.CorrectAnswerBottomSheet
+import com.andyslab.geobud.data.model.LandmarkModel
+import com.andyslab.geobud.ui.components.CorrectAnswerBottomSheet
 import com.andyslab.geobud.ui.Screen
-import com.andyslab.geobud.component.TopBarItem
+import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.utils.shimmerLoadingEffect
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -84,9 +84,9 @@ import kotlinx.coroutines.launch
     ExperimentalMaterial3Api::class
 )
 @Composable
-fun LandmarkQuizScreen(navController: NavController){
+fun QuizScreen(navController: NavController){
     val context = LocalContext.current
-    val viewModel = LandmarkQuizViewModel(context)
+    val viewModel = QuizViewModel(context)
 
     val correctAnswer = remember{
         mutableStateOf(false)
@@ -104,8 +104,8 @@ fun LandmarkQuizScreen(navController: NavController){
         mutableStateOf<List<String>>(listOf("","","",""))
     }
 
-    val hearts by viewModel.hearts.collectAsState()
-    val currLandmark by viewModel.currLandmark.collectAsState()
+    //val hearts by viewModel.hearts.collectAsState()
+    //val currLandmark by viewModel.currLandmark.collectAsState()
 
     val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.Hidden,
@@ -118,7 +118,7 @@ fun LandmarkQuizScreen(navController: NavController){
 
     val bottomSheetScope = rememberCoroutineScope()
     var bottomSheetLandmark by remember{
-        mutableStateOf(Landmark("","",""))
+        mutableStateOf(LandmarkModel("","",""))
     }//variable for landmark info displayed on the bottom sheet
 
     var imageLoading by remember{
@@ -127,53 +127,55 @@ fun LandmarkQuizScreen(navController: NavController){
 
     val lottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
-    LaunchedEffect(correctAnswer.value){
-        //delay(2000)
-        if(!correctAnswer.value){
-            currOptions = viewModel.generateOptions().toList()
-        }
-
-        if(correctAnswer.value){
-            bottomSheetLandmark = currLandmark
-            sheetState.expand()
-        }
-
-        if(!correctAnswer.value){
-            viewModel.loadImage()
-            viewModel.imageState.collect { event ->
-                    when (event) {
-                        is LandmarkQuizViewModel.ImageLoadEvent.LoadImage -> {
-                            imageLoading = true
-                        }
-                        is LandmarkQuizViewModel.ImageLoadEvent.ImageLoaded -> {
-                            imageLoading = false
-                            photo = event.drawable
-                            // Use the loaded bitmap with GlideImage model or other UI logic
-                        }
-
-                        else -> {}
-                    }
-            }
-        }
-    }
+//    LaunchedEffect(correctAnswer.value){
+//        //delay(2000)
+//        if(!correctAnswer.value){
+//            //currOptions = viewModel.generateOptions().toList()
+//        }
+//
+//        if(correctAnswer.value){
+//            //bottomSheetLandmark = currLandmark
+//            sheetState.expand()
+//        }
+//
+//        if(!correctAnswer.value){
+//            viewModel.loadImage()
+//            viewModel.imageState.collect { event ->
+//                    when (event) {
+//                        is QuizViewModel.ImageLoadEvent.LoadImage -> {
+//                            imageLoading = true
+//                        }
+//                        is QuizViewModel.ImageLoadEvent.ImageLoaded -> {
+//                            imageLoading = false
+//                            photo = event.drawable
+//                            // Use the loaded bitmap with GlideImage model or other UI logic
+//                        }
+//
+//                        else -> {}
+//                    }
+//            }
+//        }
+//    }
 
     //the point of this wrapper box is to have something to add the confetti animations to
     Box(modifier = Modifier.fillMaxSize()){
-    BottomSheetScaffold(sheetContent = { CorrectAnswerBottomSheet(
-        exclamation = viewModel.generateExclamation(),
-        addedCoins = 20,
-        addedStars = 1,
-        landmark = bottomSheetLandmark,
-        continueButtonClick = {
-            bottomSheetScope.launch{
-                sheetState.hide()
-            }
-            viewModel.updatePlayerData()
-            imageLoading = true
-            correctAnswer.value = false //make launched effect run again
-        }
-    )
-    },
+    BottomSheetScaffold(
+        sheetContent = {
+            CorrectAnswerBottomSheet(
+                exclamation = "Nice",//viewModel.generateExclamation(),
+                addedCoins = 20,
+                addedStars = 1,
+                landmark = bottomSheetLandmark,
+                continueButtonClick = {
+                    bottomSheetScope.launch{
+                    sheetState.hide()
+                    }
+                    //viewModel.updatePlayerData()
+                    imageLoading = true
+                    correctAnswer.value = false //make launched effect run again
+                }
+            )
+                       },
         modifier = Modifier.fillMaxSize(),
         scaffoldState = scaffoldState,
         sheetPeekHeight = 0.dp,
@@ -259,7 +261,7 @@ fun LandmarkQuizScreen(navController: NavController){
 
                 TopBarItem(icon = R.drawable.heart,
                     modifier = Modifier.weight(1f),
-                    text = hearts.toString())
+                    text = "3",)//hearts.toString())
             }}
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -299,17 +301,21 @@ fun LandmarkQuizScreen(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             OptionButton(text = currOptions.elementAt(0), correctAnswer){
-                viewModel.isAnswerCorrect(it)
+                //viewModel.isAnswerCorrect(it)
+                true
             }
             OptionButton(text = currOptions.elementAt(1), correctAnswer){
-                viewModel.isAnswerCorrect(it)
+                //viewModel.isAnswerCorrect(it)
+                true
             }
             OptionButton(text = currOptions.elementAt(2), correctAnswer){
-                viewModel.isAnswerCorrect(it)
+               // viewModel.isAnswerCorrect(it)
+                true
             }
 
             OptionButton(text = currOptions.elementAt(3), correctAnswer){
-                    viewModel.isAnswerCorrect(it)
+                    //viewModel.isAnswerCorrect(it)
+                true
             }
         }
         }
@@ -344,7 +350,7 @@ fun LandmarkQuizScreen(navController: NavController){
 @Composable
 @Preview
 fun QuizScreenPrev(){
-    LandmarkQuizScreen(rememberNavController())
+    QuizScreen(rememberNavController())
     //ShowBottomSheetButton(modifier = Modifier,){}
 }
 

@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.andyslab.geobud.ui.Screen
-import com.andyslab.geobud.ui.quiz.LandmarkQuizScreen
-import com.andyslab.geobud.ui.menu.LoadingScreen
+import com.andyslab.geobud.ui.quiz.QuizScreen
+import com.andyslab.geobud.ui.menu.MenuScreen
 
 @Composable
 fun RootNavGraph() {
@@ -15,16 +15,14 @@ fun RootNavGraph() {
 
     NavHost(navController = navController , route = Graph.ROOT, startDestination = Screen.LoadingScreen.route,){
         composable(route = Screen.LoadingScreen.route){
-            LoadingScreen(navController)
+            MenuScreen(navController)
         }
         composable(route = Screen.LandmarksQuizScreen.route){
-            LandmarkQuizScreen(navController)
+            QuizScreen(navController)
         }
     }
 }
 
 object Graph{
     const val ROOT = "root_graph"
-    const val MAIN_MENU = "main_menu_graph"
-    const val LANDMARKS = "landmarks_graph"
 }

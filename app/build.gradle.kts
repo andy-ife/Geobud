@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
+    id("dagger.hilt.android.plugin")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -74,27 +77,41 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     //Preferences Datastore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     //Gson
     implementation ("com.google.code.gson:gson:2.10.1")
 
-    //Compose Navigation
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    //Navigation compose
+    implementation ("androidx.navigation:navigation-compose:2.8.3")
 
-    //BottomNavigation
-    implementation ("androidx.compose.material:material:1.6.2")
+    //Viewmodel compose
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
     //Glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    ksp ("com.github.bumptech.glide:compiler:4.16.0")
 
     //Lottie
     implementation ("com.airbnb.android:lottie-compose:6.4.1")
 
+    //Dagger hilt
+    implementation ("com.google.dagger:hilt-android:2.52")
+    kapt("com.google.dagger:hilt-compiler:2.52")
+    runtimeOnly ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    runtimeOnly ("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    //Room
+    implementation ("androidx.room:room-runtime:2.6.1")
+    ksp ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
+
+    // Workmanager
+    implementation ("androidx.work:work-runtime-ktx:2.10.0")
 }

@@ -10,4 +10,6 @@ data class LandmarkModel(
                             " alter cambrozi duparte al di sanctera falter" +
                             " unp",
     val photoUrl: String? = null,
+    val photographer: String? = null,
+    val photographerUrl: String? = null,
     )

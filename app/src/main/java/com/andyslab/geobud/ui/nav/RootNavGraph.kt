@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.andyslab.geobud.ui.Screen
 import com.andyslab.geobud.ui.quiz.QuizScreen
 import com.andyslab.geobud.ui.menu.MenuScreen
 

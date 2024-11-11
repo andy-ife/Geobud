@@ -41,9 +41,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,7 +70,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andyslab.geobud.R
 import com.andyslab.geobud.data.model.LandmarkModel
 import com.andyslab.geobud.ui.components.CorrectAnswerBottomSheet
-import com.andyslab.geobud.ui.Screen
+import com.andyslab.geobud.ui.nav.Screen
 import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.utils.shimmerLoadingEffect
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -86,7 +84,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun QuizScreen(navController: NavController){
     val context = LocalContext.current
-    val viewModel = QuizViewModel(context)
+    //val viewModel = QuizViewModel(context)
 
     val correctAnswer = remember{
         mutableStateOf(false)

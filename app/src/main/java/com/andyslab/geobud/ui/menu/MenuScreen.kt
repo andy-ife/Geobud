@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,9 +44,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.andyslab.geobud.R
 import com.andyslab.geobud.ui.components.ErrorDialog
-import com.andyslab.geobud.ui.Screen
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
 
 var key = true
@@ -55,7 +52,7 @@ var key = true
 @Composable
 fun MenuScreen(navController: NavController) {
     val context = LocalContext.current
-    val viewModel = MenuViewModel(context)
+    //val viewModel = MenuViewModel(context)
     var loadingProgress by remember {
         mutableFloatStateOf(0f)
     }

@@ -30,8 +30,6 @@ import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.random.Random
 
-
-
 @GlideModule
 class LandmarksRepoImpl(private val context: Context) : LandmarksRepository, AppGlideModule(){
 

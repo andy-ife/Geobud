@@ -1,6 +1,9 @@
 package com.andyslab.geobud.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.local.sources.CountriesDataSource
@@ -14,9 +17,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "player_data")
+
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
     @Provides
     fun provideContext(@ApplicationContext context: Context): Context{
         return context
@@ -44,5 +50,11 @@ class AppModule {
     @Singleton
     fun provideCountriesDataSource(): CountriesDataSource {
         return CountriesDataSource()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlayerDatastore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return context.dataStore
     }
 }

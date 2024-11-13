@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.andyslab.geobud.data.model.LandmarkModel
 
-@Database(entities = [LandmarkModel::class], version = 1)
+@Database(entities = [LandmarkModel::class], version = 1, exportSchema = true)
 abstract class LandmarkDatabase: RoomDatabase() {
     abstract val dao: LandmarkDao
 }

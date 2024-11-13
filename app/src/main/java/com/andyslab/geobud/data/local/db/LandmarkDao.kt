@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LandmarkDao {
     @Query("SELECT * FROM landmark WHERE id = :id")
-    suspend fun getLandmarkById(id: Int): Flow<LandmarkModel>
+    fun getLandmarkById(id: Int): Flow<LandmarkModel>
 
     @Update(LandmarkModel::class)
     suspend fun updateLandmark(landmark: LandmarkModel)

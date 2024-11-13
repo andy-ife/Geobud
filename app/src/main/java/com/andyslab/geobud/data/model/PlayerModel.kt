@@ -1,9 +1,9 @@
 package com.andyslab.geobud.data.model
 
 data class PlayerModel(
-    var progress: Int = 0,
-    var currentLandmark: LandmarkModel? = null,
-    var currentOptions: MutableSet<String> = mutableSetOf(),
-    var hearts: Int = 5,
-    var isFirstLaunch: Boolean = true
+    val progress: Int = 0,
+    val currentLandmark: LandmarkModel? = null,
+    val currentOptions: Set<String> = mutableSetOf(),
+    val hearts: Int = 3,
+    val isFirstLaunch: Boolean = true
 )

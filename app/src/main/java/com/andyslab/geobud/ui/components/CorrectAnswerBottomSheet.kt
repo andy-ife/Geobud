@@ -166,22 +166,3 @@ fun CorrectAnswerBottomSheet(
         }
     }
 }
-
-@Preview
-@Composable
-fun CorrectAnsBottomSheetPreview(){
-    CorrectAnswerBottomSheet(
-        modifier = Modifier,
-        exclamation = "Nice!",
-        addedCoins = 20,
-        addedStars = 1,
-        landmark = LandmarkModel("christ the redeemer",
-            "Brazil",
-            "SA",
-            "Rio de Janeiro",
-            "Lorem Ipsum delerat sancti du poltice ard lakdum" +
-                    " to faunti du placitus op sanctum lori" +
-                    " alter cambrozi duparte al di sanctera falter" +
-                    " unp")
-    )
-}

@@ -4,7 +4,7 @@ package com.andyslab.geobud.ui.menu
 //import androidx.lifecycle.ViewModel
 //import androidx.lifecycle.viewModelScope
 //import com.andyslab.geobud.data.local.Player
-//import com.andyslab.geobud.data.repository.LandmarksRepoImpl
+//import com.andyslab.geobud.data.repository.landmarks.LandmarksRepoImpl
 //import com.andyslab.geobud.utils.Resource
 //import dagger.hilt.android.lifecycle.HiltViewModel
 //import kotlinx.coroutines.cancel

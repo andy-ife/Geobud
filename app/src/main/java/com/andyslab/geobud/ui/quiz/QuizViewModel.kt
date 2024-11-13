@@ -5,7 +5,7 @@ package com.andyslab.geobud.ui.quiz
 //import androidx.lifecycle.ViewModel
 //import androidx.lifecycle.viewModelScope
 //import com.andyslab.geobud.data.local.Player
-//import com.andyslab.geobud.data.repository.LandmarksRepoImpl
+//import com.andyslab.geobud.data.repository.landmarks.LandmarksRepoImpl
 //import dagger.hilt.android.lifecycle.HiltViewModel
 //import kotlinx.coroutines.flow.MutableStateFlow
 //import kotlinx.coroutines.flow.asStateFlow

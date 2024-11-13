@@ -1,15 +1,19 @@
 package com.andyslab.geobud.data.model
 
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "landmark", indices = [Index(value = ["id"])])
 data class LandmarkModel(
+    @PrimaryKey
+    val id: Int,
     val name: String,
     val country: String,
     val continent: String,
-    val city: String = "",
-    val funFact: String = "Lorem ipsum delerat sancti du poltice ard lakdum" +
-                            " to faunti du placitus op sanctum lori" +
-                            " alter cambrozi duparte al di sanctera falter" +
-                            " unp",
-    val photoUrl: String? = null,
-    val photographer: String? = null,
-    val photographerUrl: String? = null,
+    val city: String,
+    val funFact: String,
+    val photoUrl: String?,
+    val photographer: String?,
+    val photographerUrl: String?,
     )

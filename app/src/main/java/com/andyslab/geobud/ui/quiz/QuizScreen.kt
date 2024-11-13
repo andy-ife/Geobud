@@ -116,7 +116,7 @@ fun QuizScreen(navController: NavController){
 
     val bottomSheetScope = rememberCoroutineScope()
     var bottomSheetLandmark by remember{
-        mutableStateOf(LandmarkModel("","",""))
+        mutableStateOf(LandmarkModel(0,"","","","","","","",""))
     }//variable for landmark info displayed on the bottom sheet
 
     var imageLoading by remember{

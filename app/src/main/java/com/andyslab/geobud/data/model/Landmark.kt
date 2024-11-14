@@ -5,7 +5,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "landmark", indices = [Index(value = ["id"])])
-data class LandmarkModel(
+data class Landmark(
     @PrimaryKey
     val id: Int,
     val name: String,

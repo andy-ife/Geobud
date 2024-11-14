@@ -8,6 +8,10 @@ import androidx.room.Room
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.local.sources.CountriesDataSource
 import com.andyslab.geobud.data.remote.LandmarkPhotoAPI
+import com.andyslab.geobud.data.repository.landmark.LandmarkRepoImpl
+import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
+import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
+import com.andyslab.geobud.data.repository.player.PlayerRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,5 +60,26 @@ class AppModule {
     @Singleton
     fun providePlayerDatastore(@ApplicationContext context: Context): DataStore<Preferences> {
         return context.dataStore
+    }
+
+    @Provides
+    @Singleton
+    fun providePlayerRepository(
+        countries: CountriesDataSource,
+        db: LandmarkDatabase,
+        dataStore: DataStore<Preferences>
+    ): PlayerRepository{
+        return PlayerRepoImpl(dataStore, countries, db)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLandmarkRepository(
+        @ApplicationContext context: Context,
+        db: LandmarkDatabase,
+        api: LandmarkPhotoAPI,
+        repo: PlayerRepository
+    ): LandmarkRepository{
+        return LandmarkRepoImpl(context, db, api, repo)
     }
 }

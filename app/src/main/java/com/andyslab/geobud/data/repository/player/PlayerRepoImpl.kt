@@ -9,8 +9,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.local.sources.CountriesDataSource
-import com.andyslab.geobud.data.model.LandmarkModel
-import com.andyslab.geobud.data.model.PlayerModel
+import com.andyslab.geobud.data.model.Landmark
+import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,10 +30,10 @@ class PlayerRepoImpl @Inject constructor(
     private val firstLaunchKey = booleanPreferencesKey("first_launch")
 
     companion object {
-        var instance: PlayerModel? = null
+        var instance: Player? = null
     }
 
-    override suspend fun loadPlayerData(): Flow<Resource<PlayerModel>> {
+    override suspend fun loadPlayerData(): Flow<Resource<Player>> {
         return flow {
             withContext(Dispatchers.IO){
                 if(instance == null){
@@ -45,13 +45,16 @@ class PlayerRepoImpl @Inject constructor(
 
                         val landmark = db.dao.getLandmarkById(progress).first()
 
-                        PlayerModel(
+                        Player(
                             progress = progress,
                             currentLandmark = landmark,
                             currentOptions = generateOptions(landmark),
                             hearts = hearts,
                             isFirstLaunch = isFirstLaunch
-                        ).also{ emit(Resource.Success(it)) }
+                        ).also{
+                            instance = it
+                            emit(Resource.Success(it))
+                        }
                     }catch(e: IOException){
                         emit(Resource.Error("Error loading player data"))
                         Log.d("Error loading player data", e.message.toString())
@@ -61,7 +64,7 @@ class PlayerRepoImpl @Inject constructor(
         }
     }
 
-    override suspend fun savePlayerData(player: PlayerModel): Boolean {
+    override suspend fun savePlayerData(player: Player): Boolean {
         withContext(Dispatchers.IO){
             try{
                 dataStore.edit{ prefs ->
@@ -77,7 +80,7 @@ class PlayerRepoImpl @Inject constructor(
         return true
     }
 
-    private fun generateOptions(landmark: LandmarkModel): Set<String>{
+    override fun generateOptions(landmark: Landmark): Set<String>{
         val result = mutableSetOf<String>()
         val country = landmark.country
         result.add(country)

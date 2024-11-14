@@ -68,7 +68,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andyslab.geobud.R
-import com.andyslab.geobud.data.model.LandmarkModel
+import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.ui.components.CorrectAnswerBottomSheet
 import com.andyslab.geobud.ui.nav.Screen
 import com.andyslab.geobud.ui.components.TopBarItem
@@ -116,7 +116,7 @@ fun QuizScreen(navController: NavController){
 
     val bottomSheetScope = rememberCoroutineScope()
     var bottomSheetLandmark by remember{
-        mutableStateOf(LandmarkModel(0,"","","","","","","",""))
+        mutableStateOf(Landmark(0,"","","","","","","",""))
     }//variable for landmark info displayed on the bottom sheet
 
     var imageLoading by remember{

@@ -32,11 +32,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
-import com.andyslab.geobud.data.model.LandmarkModel
+import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.utils.onClickWithScaleAnim
 
 
@@ -46,7 +45,7 @@ fun CorrectAnswerBottomSheet(
     exclamation: String,
     addedCoins: Int,
     addedStars: Int,
-    landmark: LandmarkModel,
+    landmark: Landmark,
     continueButtonClick: () -> Unit = {},
     ){
 

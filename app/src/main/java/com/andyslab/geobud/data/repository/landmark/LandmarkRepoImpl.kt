@@ -25,12 +25,12 @@ class LandmarkRepoImpl @Inject constructor(
     private val playerRepo: PlayerRepository
 ) : LandmarkRepository, AppGlideModule() {
 
-    override suspend fun fetchLandmarkPhotos(limit: Int): Flow<Resource<Unit>> {
+    override suspend fun fetchLandmarkPhotos(limit: Int): Flow<Resource<Float>> {
         return flow {
-            emit(Resource.Loading())
             val player = playerRepo.loadPlayerData().first { it is Resource.Success }.data ?: return@flow
 
-            for(i in player.progress..player.progress+limit){
+            for(i in player.progress.until(player.progress+limit)){
+                emit(Resource.Loading(i.toFloat()/limit)) // loading progress
                 if(i > db.dao.getMaxId().first()) return@flow
 
                 var landmark = db.dao.getLandmarkById(i).first()
@@ -56,7 +56,7 @@ class LandmarkRepoImpl @Inject constructor(
                     }
                 }
             }
-            emit(Resource.Success(Unit))
+            emit(Resource.Success())
         }.flowOn(Dispatchers.IO)
     }
 

@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -35,34 +36,32 @@ class PlayerRepoImpl @Inject constructor(
 
     override suspend fun loadPlayerData(): Flow<Resource<Player>> {
         return flow {
-            withContext(Dispatchers.IO){
-                if(instance == null){
-                    try{
-                        val prefs = dataStore.data.first()
-                        val hearts = prefs[heartsKey] ?: 3
-                        val progress = prefs[progressKey] ?: 0
-                        val isFirstLaunch = prefs[firstLaunchKey] ?: true
+            if(instance == null){
+                try{
+                    val prefs = dataStore.data.first()
+                    val hearts = prefs[heartsKey] ?: 3
+                    val progress = prefs[progressKey] ?: 0
+                    val isFirstLaunch = prefs[firstLaunchKey] ?: true
 
-                        val landmark = db.dao.getLandmarkById(progress).first()
+                    val landmark = db.dao.getLandmarkById(progress).first()
 
-                        Player(
-                            progress = progress,
-                            currentLandmark = landmark,
-                            currentOptions = generateOptions(landmark),
-                            hearts = hearts,
-                            isFirstLaunch = isFirstLaunch
-                        ).also{
-                            instance = it
-                            emit(Resource.Success(it))
-                        }
-                    }catch(e: IOException){
-                        emit(Resource.Error("Error loading player data"))
-                        Log.d("Error loading player data", e.message.toString())
-                    }
+                    instance = Player(
+                        progress = progress,
+                        currentLandmark = landmark,
+                        currentOptions = generateOptions(landmark),
+                        hearts = hearts,
+                        isFirstLaunch = isFirstLaunch
+                    )
+                }catch(e: IOException){
+                    emit(Resource.Error("Error loading player data"))
+                    Log.d("Error loading player data", e.message.toString())
+                    return@flow
                 }
             }
-        }
+            emit(Resource.Success(instance))
+        }.flowOn(Dispatchers.IO)
     }
+
 
     override suspend fun savePlayerData(player: Player): Boolean {
         withContext(Dispatchers.IO){

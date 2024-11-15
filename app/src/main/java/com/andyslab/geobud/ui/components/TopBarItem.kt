@@ -38,13 +38,14 @@ import com.andyslab.geobud.utils.onClickWithScaleAnim
 
 
 @Composable
-fun TopBarItem(@DrawableRes icon: Int,
-               modifier: Modifier,
-               text:String){
-
+fun TopBarItem(
+    modifier: Modifier = Modifier,
+    @DrawableRes icon: Int,
+    text:String
+){
     Box(modifier = modifier
         .height(45.dp)
-        .width(10.dp),
+        .width(100.dp),
         contentAlignment = Alignment.Center){
 
 

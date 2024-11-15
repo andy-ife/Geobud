@@ -1,84 +1,60 @@
 package com.andyslab.geobud.ui.menu
-//
-//import android.content.Context
-//import androidx.lifecycle.ViewModel
-//import androidx.lifecycle.viewModelScope
-//import com.andyslab.geobud.data.local.Player
-//import com.andyslab.geobud.data.repository.landmarks.LandmarksRepoImpl
-//import com.andyslab.geobud.utils.Resource
-//import dagger.hilt.android.lifecycle.HiltViewModel
-//import kotlinx.coroutines.cancel
-//import kotlinx.coroutines.flow.MutableStateFlow
-//import kotlinx.coroutines.flow.asStateFlow
-//import kotlinx.coroutines.launch
-//
-//
-//class MenuViewModel(): ViewModel() {
-//
-////    private val _loadProgress = MutableStateFlow(0f)
-////    val loadProgress = _loadProgress.asStateFlow()
-////
-////    private val _hasPhotoURLs = MutableStateFlow(false)
-////    val hasPhotoURLs = _hasPhotoURLs.asStateFlow()
-////
-////    private val _hasDownloadedPhotos = MutableStateFlow(false)
-////    val hasDownloadedPhotos = _hasDownloadedPhotos.asStateFlow()
-////
-////    private val _showErrorDialog = MutableStateFlow("")
-////    val showErrorDialog = _showErrorDialog.asStateFlow()
-////
-////    private val landmarksRepo = LandmarksRepoImpl(context)
-////    private val player = Player(context)
-////
-////
-////    fun doLoading(){
-////        _loadProgress.value = 0f
-////        viewModelScope.launch {
-////
-////            player.loadPlayerData()
-////
-////            if(!_hasPhotoURLs.value){
-////            landmarksRepo.getLandmarkPhotoURLs(Player.instance).collect { resource ->
-////                when(resource){
-////                    is Resource.Loading -> _loadProgress.value+=0.04f
-////                    is Resource.Error -> {
-////                        _showErrorDialog.value = (resource.message.toString())
-////                        cancel()
-////                    }
-////                    is Resource.Success -> {
-////                        //_loadProgress.value+=0.04f
-////                        _hasPhotoURLs.value = true
-////                        _hasDownloadedPhotos.value = true
-////                        _loadProgress.value = 1f
-////                    }
-////                }
-////            }
-////            }
-////
-////            /*if(!_hasDownloadedPhotos.value){
-////            landmarksRepo.downloadAndCachePhotos(Player.instance).collect{ resource ->
-////                when(resource){
-////                    is Resource.Loading -> _loadProgress.value+=0.04f //crashes after this line
-////                    is Resource.Error -> {
-////                        _showErrorDialog.value =(resource.message.toString())
-////                        cancel()
-////                    }
-////                    is Resource.Success -> {
-////                        _hasDownloadedPhotos.value = true
-////                        _loadProgress.value = 1f
-////                    }
-////                }
-////            }
-////        }*/
-////
-////        }
-////    }
-////
-////
-////    fun retryLoading(){
-////        //Changing showError.value will cause ui recomposition and consequently retry of loading
-////        _showErrorDialog.value = ""
-////        _loadProgress.value = 0f
-////    }
-//
-//}
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.andyslab.geobud.data.model.Player
+import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
+import com.andyslab.geobud.data.repository.player.PlayerRepository
+import com.andyslab.geobud.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class MenuViewModel @Inject constructor(
+    private val landmarkRepo: LandmarkRepository,
+    private val playerRepo: PlayerRepository,
+): ViewModel() {
+
+    private val _uiState = MutableStateFlow<MenuUiState>(MenuUiState.Loading(0f))
+    val uiState = _uiState.asStateFlow()
+
+    init { load() }
+
+    fun load(){
+        viewModelScope.launch{
+            landmarkRepo.fetchLandmarkPhotos(10).collect{ result ->
+                  when(result){
+                      is Resource.Error -> {
+                          _uiState.update {
+                              MenuUiState.Error(result.message.toString())
+                          }
+                          return@collect
+                      }
+                      is Resource.Loading -> {
+                          _uiState.update {
+                              MenuUiState.Loading(result.data!!)
+                          }
+                      }
+                      is Resource.Success -> {
+                          val player = playerRepo.loadPlayerData().first{ it is Resource.Success }.data
+                          _uiState.update {
+                              MenuUiState.Success(player!!)
+                          }
+                      }
+                  }
+            }
+        }
+    }
+}
+
+sealed interface MenuUiState{
+    data class Loading(val progress: Float): MenuUiState
+    data class Error(val message: String): MenuUiState
+    data class Success(val data: Player): MenuUiState
+}

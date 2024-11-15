@@ -57,7 +57,7 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
             Row (modifier = Modifier.padding(8.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
-                horizontalArrangement = Arrangement.Start){
+                horizontalArrangement = Arrangement.End){
 
                 TextButton(
                     onClick = { onDismiss() },
@@ -81,5 +81,5 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
 @Composable
 @Preview
 fun ErrorDialogPreview(){
-    ErrorDialog(modifier = Modifier, "Connection Error. Please check your internet connection"){}
+    ErrorDialog(modifier = Modifier, "Connection error. Please check your internet connection"){}
 }

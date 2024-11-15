@@ -98,6 +98,10 @@ dependencies {
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
     ksp ("com.github.bumptech.glide:compiler:4.16.0")
 
+    //Coil
+    implementation("io.coil-kt.coil3:coil-compose:3.0.3")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.3")
+
     //Lottie
     implementation ("com.airbnb.android:lottie-compose:6.4.1")
 

@@ -21,7 +21,7 @@ class MenuViewModel @Inject constructor(
     private val playerRepo: PlayerRepository,
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow<MenuUiState>(MenuUiState.Loading(0f))
+    private val _uiState = MutableStateFlow<MenuUiState>(MenuUiState.Loading(0.05f))
     val uiState = _uiState.asStateFlow()
 
     init { load() }

@@ -2,7 +2,6 @@ package com.andyslab.geobud.ui.quiz
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
@@ -23,90 +22,115 @@ class QuizViewModel @Inject constructor(
 
     init{ getPhoto() }
 
-    private val _uiState = MutableStateFlow<QuizUiState>(QuizUiState.PhotoLoading)
+    private val _uiState = MutableStateFlow(QuizUiState())
     val uiState = _uiState.asStateFlow()
 
-    lateinit var player: Player
+    private lateinit var player: Player
+    private var lastExclamation = ""
 
-    private fun getPhoto() {
+    fun getPhoto() {
         viewModelScope.launch{
-            val photo = playerRepo.loadPlayerData().first().data!!.also{player = it}.currentLandmark!!
+            val photo = playerRepo.loadPlayerData().first().data!!
+                .also{ p ->
+                    player = p
+                    _uiState.update { it.copy(player = p) }
+                }.currentLandmark!!
+
             val url = photo.photoUrl
-
             if(url == null){
-                _uiState.update { QuizUiState.FetchingMorePhotos(0f) }
-
                 landmarkRepo.fetchLandmarkPhotos(10).collect{ result ->
                     when(result){
                         is Resource.Error -> {
-                            _uiState.update { QuizUiState.Error(result.message.toString()) }
-                            return@collect
+                            _uiState.update {
+                                it.copy(
+                                    error = ErrorState(result.message.toString()),
+                                    fetchingMorePhotos = null,
+                                    photoLoading = false
+                                )
+                            }
                         }
                         is Resource.Loading -> {
-                            _uiState.update { QuizUiState.FetchingMorePhotos(result.data!!) }
+                            _uiState.update {
+                                it.copy(
+                                    error = null,
+                                    fetchingMorePhotos = FetchingState(result.data!!),
+                                    photoLoading = false
+                                )
+                            }
                         }
-                        is Resource.Success -> { onRetry() }
+                        is Resource.Success -> { retry() }
                     }
                 }
             }else{
-                val photographer = photo.photographer ?: ""
-                val photographerUrl = photo.photographerUrl ?: ""
-
-                _uiState.update {
-                    QuizUiState.PhotoSuccess(
-                        url,
-                        photographer,
-                        photographerUrl,
-                        player.currentOptions,
-                        player.hearts,
-                        photo.id
-                        )
+                _uiState.update{
+                    it.copy(
+                        player = player,
+                        answerCorrect = null,
+                        photoLoading = false,
+                        error = null,
+                        fetchingMorePhotos = null
+                )
                 }
             }
         }
     }
 
-    fun checkAnswer(answer: String){
+    fun checkAnswer(answer: String): Boolean{
+        var result = false
         if(player.hearts > 0){
             if(answer == player.currentLandmark?.country){
                 viewModelScope.launch { landmarkRepo.addProgress(player) }
-                _uiState.update { QuizUiState.AnswerCorrect(player.currentLandmark!!) }
+                _uiState.update {
+                    it.copy(answerCorrect = true)
+                }
+                result = true
             }else{
                 player.hearts--
-                _uiState.update { QuizUiState.AnswerWrong(answer, player.hearts) }
+                _uiState.update {
+                    it.copy(player = player, answerCorrect = false)
+                }
             }
         }else{
             _uiState.update {
-                QuizUiState.OutOfHearts
+                it.copy(outOfHearts = true)
             }
         }
+        return result
     }
 
-    fun onRetry(){
-        _uiState.update { QuizUiState.PhotoLoading }
+    fun retry(){
+        _uiState.update { QuizUiState() }
         getPhoto()
     }
 
     fun onPhotoLoadFailed(){
         _uiState.update {
-            QuizUiState.Error("Something went wrong. Check your internet connection and try again.")
+            it.copy(error = ErrorState("Couldn't load photo. Check your internet connection and try again."))
         }
+    }
+
+    fun generateExclamation(): String{
+        val exclams = setOf(
+            "Nice!", "Great job!", "You're on fire!", "Amazing!", "Great!", "Cool!", "Geo-master!"
+        )
+        var curr = ""
+
+        while(lastExclamation == curr){
+            curr = exclams.random()
+        }
+        lastExclamation = curr
+        return curr
     }
 }
 
-sealed interface QuizUiState {
-    object PhotoLoading: QuizUiState
-    data class PhotoSuccess(
-        val url: String,
-        val photographer: String,
-        val photographerUrl: String,
-        val options: Set<String>,
-        val hearts: Int,
-        val id: Int,
-    ): QuizUiState
-    data class FetchingMorePhotos(val progress: Float): QuizUiState
-    data class AnswerCorrect(val landmark: Landmark): QuizUiState
-    data class AnswerWrong(val answer: String, val hearts:Int): QuizUiState
-    data class Error(val message: String): QuizUiState
-    object OutOfHearts: QuizUiState
-}
+data class QuizUiState(
+    val player: Player? = null,
+    val answerCorrect: Boolean? = null,
+    val photoLoading: Boolean = true,
+    val error: ErrorState? = null,
+    val fetchingMorePhotos: FetchingState? = null,
+    val outOfHearts: Boolean = false,
+)
+
+data class ErrorState(val message: String)
+data class FetchingState(val progress: Float)

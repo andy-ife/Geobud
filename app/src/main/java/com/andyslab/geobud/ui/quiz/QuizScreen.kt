@@ -1,17 +1,11 @@
 package com.andyslab.geobud.ui.quiz
 import android.view.MotionEvent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,27 +15,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,238 +45,229 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import coil3.compose.AsyncImagePainter
+import coil3.compose.ImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andyslab.geobud.R
-import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.ui.components.CorrectAnswerBottomSheet
-import com.andyslab.geobud.ui.nav.Screen
+import com.andyslab.geobud.ui.components.ErrorDialog
+import com.andyslab.geobud.ui.components.FetchingMorePhotosDialog
+import com.andyslab.geobud.ui.components.QuizOptionButton
+import com.andyslab.geobud.ui.components.ShowBottomSheetButton
 import com.andyslab.geobud.ui.components.TopBarItem
+import com.andyslab.geobud.ui.nav.Screen
 import com.andyslab.geobud.utils.shimmerLoadingEffect
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import kotlinx.coroutines.delay
+import com.bumptech.glide.integration.ktx.ExperimentGlideFlows
 import kotlinx.coroutines.launch
 
+//Stateful
+@Composable
+fun QuizScreen(
+    navController: NavHostController,
+    viewModel: QuizViewModel = hiltViewModel()
+){
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    if(uiState.player != null){
+        QuizScreen(
+            navController = navController,
+            uiState = uiState,
+            getPhoto = viewModel::getPhoto,
+            checkAnswer = viewModel::checkAnswer,
+            generateExclamation = viewModel::generateExclamation,
+            retry = viewModel::retry,
+            onPhotoLoadFailed = viewModel::onPhotoLoadFailed
+        )
+    }
+}
+
+//Stateless
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentGlideFlows::class
 )
 @Composable
-fun QuizScreen(navController: NavController){
+fun QuizScreen(
+    navController: NavHostController,
+    uiState: QuizUiState,
+    getPhoto: () -> Unit,
+    checkAnswer: (String) -> Boolean,
+    generateExclamation: () -> String,
+    retry: () -> Unit,
+    onPhotoLoadFailed: () -> Unit,
+    ){
     val context = LocalContext.current
-    //val viewModel = QuizViewModel(context)
 
-    val correctAnswer = remember{
-        mutableStateOf(false)
-    }
-
-    var photo by remember{
-        mutableStateOf(ContextCompat.getDrawable(context, R.drawable.placeholder_drawable))
-    }
-
-    var textVisible by remember{
-        mutableStateOf(true)     
-    }
-
-    var currOptions by remember{
-        mutableStateOf<List<String>>(listOf("","","",""))
-    }
-
-    //val hearts by viewModel.hearts.collectAsState()
-    //val currLandmark by viewModel.currLandmark.collectAsState()
+    val landmark = uiState.player!!.currentLandmark!!
 
     val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.Hidden,
         skipHiddenState = false,
         )
 
-    val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = sheetState
-    )
+    val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
 
-    val bottomSheetScope = rememberCoroutineScope()
-    var bottomSheetLandmark by remember{
-        mutableStateOf(Landmark(0,"","","","","","","",""))
-    }//variable for landmark info displayed on the bottom sheet
-
-    var imageLoading by remember{
-        mutableStateOf(true)
-    }
-
+    val scope = rememberCoroutineScope()
     val lottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
-//    LaunchedEffect(correctAnswer.value){
-//        //delay(2000)
-//        if(!correctAnswer.value){
-//            //currOptions = viewModel.generateOptions().toList()
-//        }
-//
-//        if(correctAnswer.value){
-//            //bottomSheetLandmark = currLandmark
-//            sheetState.expand()
-//        }
-//
-//        if(!correctAnswer.value){
-//            viewModel.loadImage()
-//            viewModel.imageState.collect { event ->
-//                    when (event) {
-//                        is QuizViewModel.ImageLoadEvent.LoadImage -> {
-//                            imageLoading = true
-//                        }
-//                        is QuizViewModel.ImageLoadEvent.ImageLoaded -> {
-//                            imageLoading = false
-//                            photo = event.drawable
-//                            // Use the loaded bitmap with GlideImage model or other UI logic
-//                        }
-//
-//                        else -> {}
-//                    }
-//            }
-//        }
-//    }
+    var textVisible by remember{ mutableStateOf(true) }
+
+    val painter: AsyncImagePainter = rememberAsyncImagePainter(landmark.photoUrl ?: "")
+    val painterState by painter.state.collectAsState()
+
+    LaunchedEffect(uiState) {
+        if(uiState.answerCorrect == true){
+            sheetState.expand()
+        }
+    }
 
     //the point of this wrapper box is to have something to add the confetti animations to
     Box(modifier = Modifier.fillMaxSize()){
-    BottomSheetScaffold(
+        BottomSheetScaffold(
         sheetContent = {
             CorrectAnswerBottomSheet(
-                exclamation = "Nice",//viewModel.generateExclamation(),
+                exclamation = generateExclamation(),
                 addedCoins = 20,
                 addedStars = 1,
-                landmark = bottomSheetLandmark,
+                landmark = landmark,
                 continueButtonClick = {
-                    bottomSheetScope.launch{
-                    sheetState.hide()
-                    }
-                    //viewModel.updatePlayerData()
-                    imageLoading = true
-                    correctAnswer.value = false //make launched effect run again
+                    scope.launch{ sheetState.hide() }
+                    retry()
                 }
             )
                        },
-        modifier = Modifier.fillMaxSize(),
-        scaffoldState = scaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContainerColor = Color.White){
+            modifier = Modifier.fillMaxSize(),
+            scaffoldState = scaffoldState,
+            sheetPeekHeight = 0.dp,
+            sheetContainerColor = Color.White) {
 
-        GlideImage(model = photo,
-            contentDescription = "Landmark Photo",
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInteropFilter {
-                    when (it.action) {
-                        MotionEvent.ACTION_UP -> {
-                            textVisible = !textVisible
+            Image(
+                painter = painter,
+                contentDescription = "landmark photo",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInteropFilter {
+                        when (it.action) {
+                            MotionEvent.ACTION_UP -> {
+                                textVisible = !textVisible
+                            }
+                            else -> {}
                         }
-
-                        else -> {}
-                    }
-                    true
-                },
-            contentScale = ContentScale.FillBounds,
+                        true
+                    },
+                contentScale = ContentScale.FillBounds,
             )
 
-        //shimmer loading box
-        AnimatedVisibility(visible = imageLoading,
-            enter = fadeIn(),
-            exit = fadeOut()) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .shimmerLoadingEffect())
-        }
-
-        AnimatedVisibility(visible = textVisible,
-            enter = fadeIn(),
-            exit = fadeOut()){
-
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0x19000000),
-                            Color.Transparent,
-                            Color(0xB2000000)
-                        ),
-                    )
-                ))
-        }
-
-        Column(verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)) {
-
-            AnimatedVisibility(visible = textVisible,
+            //shimmer loading box
+            AnimatedVisibility(
+                visible = (painterState is AsyncImagePainter.State.Loading || uiState.photoLoading),
                 enter = fadeIn(),
                 exit = fadeOut()
-            ){
-            Row (verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.fillMaxWidth()){
-
-                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "back",
+            ) {
+                Box(
                     modifier = Modifier
-                        .size(40.dp)
-                        .clickable {
-                            navController.navigate(Screen.LoadingScreen.route) {
-                                popUpTo(Screen.LoadingScreen.route) {
-                                    inclusive = true
-                                }
-                            }
-                        },
-                    tint = Color.White)
-
-                Text(text = "Landmarks - Pack 1",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily.SansSerif,
-                    color = Color.White,
+                        .fillMaxSize()
+                        .shimmerLoadingEffect()
                 )
+            }
 
-                Spacer(modifier = Modifier.width(50.dp))
-
-                TopBarItem(icon = R.drawable.heart,
-                    modifier = Modifier.weight(1f),
-                    text = "3",)//hearts.toString())
-            }}
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            AnimatedVisibility(visible = textVisible,
+            //gradient box to improve text visibility
+            AnimatedVisibility(
+                visible = textVisible,
                 enter = fadeIn(),
                 exit = fadeOut()
             ){
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp),) {
-                Text(text = "Landmark 1/10",
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.SansSerif,
-                    color = Color.White,
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color(0x19000000),
+                                Color.Transparent,
+                                Color(0xB2000000)
+                            ),
+                        )
+                    ))
+            }
+
+            Column(verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)) {
+
+                AnimatedVisibility(
+                    visible = textVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ){
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+
+                        Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "back",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    navController.navigate(Screen.LoadingScreen.route) {
+                                        popUpTo(Screen.LoadingScreen.route) {
+                                            inclusive = true
+                                        }
+                                    }
+                                },
+                            tint = Color.White)
+
+                        Text(text = "Landmarks - ${landmark.id + 1}",
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            color = Color.White,
+                        )
+
+                        Spacer(modifier = Modifier.width(50.dp))
+
+                        TopBarItem(icon = R.drawable.heart,
+                            modifier = Modifier.weight(1f),
+                            text = uiState.player.hearts.toString(),)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                AnimatedVisibility(visible = textVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ){
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp),) {
+
+                    Icon(painter = painterResource(
+                        id = R.drawable.outline_file_download_24),
+                        contentDescription = "save photo",
+                        modifier = Modifier.size(30.dp),
+                        tint = Color.White
                     )
+                }
+                }
 
-                Icon(painter = painterResource(
-                    id = R.drawable.outline_file_download_24),
-                    contentDescription = "save photo",
-                    modifier = Modifier.size(30.dp),
-                    tint = Color.White)
-        }}
+            }
 
-        }
 
-        AnimatedVisibility(visible = textVisible,
+        AnimatedVisibility(
+            visible = textVisible,
             enter = fadeIn(),
             exit = fadeOut()
         ){
@@ -298,28 +277,38 @@ fun QuizScreen(navController: NavController){
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            OptionButton(text = currOptions.elementAt(0), correctAnswer){
-                //viewModel.isAnswerCorrect(it)
-                true
+            val options = uiState.player.currentOptions
+            QuizOptionButton(text = options.elementAt(0),){
+                checkAnswer(it)
             }
-            OptionButton(text = currOptions.elementAt(1), correctAnswer){
-                //viewModel.isAnswerCorrect(it)
-                true
+            QuizOptionButton(text = options.elementAt(1),){
+                checkAnswer(it)
             }
-            OptionButton(text = currOptions.elementAt(2), correctAnswer){
-               // viewModel.isAnswerCorrect(it)
-                true
+            QuizOptionButton(text = options.elementAt(2),){
+                checkAnswer(it)
             }
 
-            OptionButton(text = currOptions.elementAt(3), correctAnswer){
-                    //viewModel.isAnswerCorrect(it)
-                true
+            QuizOptionButton(text = options.elementAt(3),){
+                checkAnswer(it)
             }
         }
         }
+
+            if(uiState.fetchingMorePhotos != null){
+                FetchingMorePhotosDialog(progress = uiState.fetchingMorePhotos.progress) {
+                    retry()
+                }
+            }
+
+            if(uiState.error != null || painterState is AsyncImagePainter.State.Error){
+                ErrorDialog(message = uiState.error?.message?:"null") {
+                    retry()
+                }
+            }
+
 
         AnimatedVisibility(
-            visible = correctAnswer.value && textVisible,
+            visible = uiState.answerCorrect == true && textVisible,
             enter = fadeIn(tween(2000)),
             exit = fadeOut(tween(0))
         ) {
@@ -329,7 +318,7 @@ fun QuizScreen(navController: NavController){
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End){
                 ShowBottomSheetButton(modifier = Modifier) {
-                bottomSheetScope.launch {
+                scope.launch {
                     sheetState.expand()
                 }
             }
@@ -338,7 +327,7 @@ fun QuizScreen(navController: NavController){
 
     }
         //lottie
-        if(correctAnswer.value){
+        if(uiState.answerCorrect == true){
             LottieAnimation(composition = lottie)
         }
     }
@@ -348,83 +337,5 @@ fun QuizScreen(navController: NavController){
 @Composable
 @Preview
 fun QuizScreenPrev(){
-    QuizScreen(rememberNavController())
-    //ShowBottomSheetButton(modifier = Modifier,){}
+
 }
-
-@Composable
-fun OptionButton(text: String, isCorrect: MutableState<Boolean>, checkAnswer: (String) -> Boolean){
-    val buttonColorScope = rememberCoroutineScope()
-
-    var buttonColor by remember{
-        mutableStateOf(Color(0x651976D2))
-    }
-
-    val buttonColorAnim by animateColorAsState(
-        targetValue = buttonColor ,
-        label = "button color anim"
-    )
-
-    TextButton(onClick = {
-                         if(checkAnswer(text)){
-                             buttonColorScope.launch{
-                                 buttonColor = Color(0x6566BB6A)
-                                 delay(2000)
-                                 buttonColor = Color(0x651976D2)
-                             }
-                             isCorrect.value = true
-                         }else{
-                             buttonColorScope.launch{
-                                 buttonColor = Color(0x65F44336)
-                                 delay(1000)
-                                 buttonColor = Color(0x651976D2)
-                             }
-                             isCorrect.value = false
-                         }
-    },
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.textButtonColors(
-            containerColor = buttonColorAnim,
-            contentColor = Color.White
-        ),
-        //contentPadding = PaddingValues(2.dp),
-        modifier = Modifier.width(180.dp)
-    ) {
-        Text(text = text,
-            fontSize = 14.sp,
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Light)
-    }
-}
-
-@Composable
-fun ShowBottomSheetButton(modifier: Modifier, onClick: () -> Unit){
-    val transition = rememberInfiniteTransition(label = "button color")
-    val color by transition.animateColor(
-        initialValue = Color(0xFFCDDC39),
-        targetValue = Color(0xFFFFB300),
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000),
-            repeatMode = RepeatMode.Reverse
-        ), label = "button color"
-    )
-
-    FilledIconButton(onClick = { onClick()},
-        modifier = modifier
-            .size(48.dp)
-            .border(2.dp, Color.White, CircleShape,),
-        shape = CircleShape,
-        colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = color
-        )) {
-        Image(painter = painterResource(id = R.drawable.right_arrow_next_svgrepo_com),
-            contentDescription = "award",
-            modifier = Modifier
-                .size(25.dp)
-                .offset(1.dp))
-    }
-}
-
-
-
-

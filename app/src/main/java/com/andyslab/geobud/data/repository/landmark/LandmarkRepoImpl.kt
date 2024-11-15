@@ -66,12 +66,16 @@ class LandmarkRepoImpl @Inject constructor(
         }
     }
 
-    suspend fun Player.addProgress(){
+    override suspend fun addProgress(player: Player){
         withContext(Dispatchers.IO){
-            this@addProgress.progress++
-            this@addProgress.currentLandmark = getLandmarkById(progress).first()
-            this@addProgress.currentOptions = playerRepo.generateOptions(currentLandmark!!)
-            playerRepo.savePlayerData(this@addProgress)
+            player.run{
+                progress++
+                currentLandmark = getLandmarkById(progress).first()
+                currentOptions = playerRepo.generateOptions(currentLandmark!!)
+                isFirstLaunch = false
+
+                playerRepo.savePlayerData(this)
+            }
         }
     }
 }

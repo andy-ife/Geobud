@@ -7,6 +7,8 @@ import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
 import com.andyslab.geobud.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -20,24 +22,37 @@ class QuizViewModel @Inject constructor(
     private val playerRepo: PlayerRepository
 ) : ViewModel(){
 
-    init{ getPhoto() }
-
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var job = Job()
+        get(){
+            if(field.isCancelled) field = Job()
+            return field
+        }
+
     private lateinit var player: Player
-    private var lastExclamation = ""
+
+    init{ getPhoto() }
 
     fun getPhoto() {
-        viewModelScope.launch{
-            val photo = playerRepo.loadPlayerData().first().data!!
+        job.cancel()
+        viewModelScope.launch(job){
+            val url = playerRepo.loadPlayerData().first().data!!
                 .also{ p ->
                     player = p
-                    _uiState.update { it.copy(player = p) }
-                }.currentLandmark!!
+                    _uiState.update {
+                        it.copy(
+                            player = p,
+                            error = null,
+                            fetchingMorePhotos = null,
+                            answerCorrect = null,
+                            photoLoading = false
+                        )
+                    }
+                }.currentLandmark!!.photoUrl
 
-            val url = photo.photoUrl
-            if(url == null){
+            if(url == null){ // limit should be 10
                 landmarkRepo.fetchLandmarkPhotos(10).collect{ result ->
                     when(result){
                         is Resource.Error -> {
@@ -58,7 +73,18 @@ class QuizViewModel @Inject constructor(
                                 )
                             }
                         }
-                        is Resource.Success -> { retry() }
+                        is Resource.Success -> {
+                            player = playerRepo.loadPlayerData().first().data!!
+                            _uiState.update{
+                                it.copy(
+                                    player = player,
+                                    answerCorrect = null,
+                                    photoLoading = false,
+                                    error = null,
+                                    fetchingMorePhotos = null
+                                )
+                            }
+                        }
                     }
                 }
             }else{
@@ -69,7 +95,7 @@ class QuizViewModel @Inject constructor(
                         photoLoading = false,
                         error = null,
                         fetchingMorePhotos = null
-                )
+                    )
                 }
             }
         }
@@ -79,15 +105,18 @@ class QuizViewModel @Inject constructor(
         var result = false
         if(player.hearts > 0){
             if(answer == player.currentLandmark?.country){
-                viewModelScope.launch { landmarkRepo.addProgress(player) }
                 _uiState.update {
                     it.copy(answerCorrect = true)
+                }
+                viewModelScope.launch {
+                    delay(100)
+                    landmarkRepo.addProgress(player)
                 }
                 result = true
             }else{
                 player.hearts--
                 _uiState.update {
-                    it.copy(player = player, answerCorrect = false)
+                    it.copy(player = player.copy(), answerCorrect = false)
                 }
             }
         }else{
@@ -98,14 +127,13 @@ class QuizViewModel @Inject constructor(
         return result
     }
 
-    fun retry(){
-        _uiState.update { QuizUiState() }
-        getPhoto()
-    }
-
     fun onPhotoLoadFailed(){
         _uiState.update {
-            it.copy(error = ErrorState("Couldn't load photo. Check your internet connection and try again."))
+            it.copy(
+                error = ErrorState("Couldn't load photo. Check your internet connection and try again."),
+                photoLoading = false,
+                fetchingMorePhotos = null,
+            )
         }
     }
 
@@ -113,24 +141,20 @@ class QuizViewModel @Inject constructor(
         val exclams = setOf(
             "Nice!", "Great job!", "You're on fire!", "Amazing!", "Great!", "Cool!", "Geo-master!"
         )
-        var curr = ""
-
-        while(lastExclamation == curr){
-            curr = exclams.random()
-        }
-        lastExclamation = curr
-        return curr
+        return exclams.random()
     }
 }
 
 data class QuizUiState(
+    // mutually exclusive
     val player: Player? = null,
+    val outOfHearts: Boolean = false,
     val answerCorrect: Boolean? = null,
+    //concurrent
     val photoLoading: Boolean = true,
     val error: ErrorState? = null,
     val fetchingMorePhotos: FetchingState? = null,
-    val outOfHearts: Boolean = false,
-)
+    )
 
 data class ErrorState(val message: String)
 data class FetchingState(val progress: Float)

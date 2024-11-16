@@ -27,7 +27,7 @@ class MenuViewModel @Inject constructor(
     init { load() }
 
     fun load(){
-        viewModelScope.launch{
+        viewModelScope.launch{ //limit should be 10
             landmarkRepo.fetchLandmarkPhotos(10).collect{ result ->
                   when(result){
                       is Resource.Error -> {

@@ -80,6 +80,6 @@ class AppModule {
         api: LandmarkPhotoAPI,
         repo: PlayerRepository
     ): LandmarkRepository{
-        return LandmarkRepoImpl(context, db, api, repo)
+        return LandmarkRepoImpl(db, api, repo)
     }
 }

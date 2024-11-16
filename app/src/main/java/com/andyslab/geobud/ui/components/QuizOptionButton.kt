@@ -15,10 +15,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.andyslab.geobud.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -64,7 +66,6 @@ fun QuizOptionButton(
     ) {
         Text(text = text,
             fontSize = 14.sp,
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Light)
+            fontFamily = FontFamily(Font(R.font.bubblegum_sans)),)
     }
 }

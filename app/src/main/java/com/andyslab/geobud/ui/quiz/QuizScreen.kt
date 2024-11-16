@@ -44,6 +44,7 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,15 +85,15 @@ fun QuizScreen(
             getPhoto = viewModel::getPhoto,
             checkAnswer = viewModel::checkAnswer,
             generateExclamation = viewModel::generateExclamation,
-            retry = viewModel::retry,
             onPhotoLoadFailed = viewModel::onPhotoLoadFailed
         )
     }
 }
 
 //Stateless
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalMaterial3Api::class, ExperimentGlideFlows::class
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalMaterial3Api::class
 )
 @Composable
 fun QuizScreen(
@@ -101,11 +102,8 @@ fun QuizScreen(
     getPhoto: () -> Unit,
     checkAnswer: (String) -> Boolean,
     generateExclamation: () -> String,
-    retry: () -> Unit,
     onPhotoLoadFailed: () -> Unit,
     ){
-    val context = LocalContext.current
-
     val landmark = uiState.player!!.currentLandmark!!
 
     val sheetState = rememberStandardBottomSheetState(
@@ -120,8 +118,8 @@ fun QuizScreen(
 
     var textVisible by remember{ mutableStateOf(true) }
 
-    val painter: AsyncImagePainter = rememberAsyncImagePainter(landmark.photoUrl ?: "")
-    val painterState by painter.state.collectAsState()
+    val painter: AsyncImagePainter = rememberAsyncImagePainter(landmark.photoUrl ?: R.drawable.placeholder_drawable)
+    val painterState by painter.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         if(uiState.answerCorrect == true){
@@ -140,7 +138,7 @@ fun QuizScreen(
                 landmark = landmark,
                 continueButtonClick = {
                     scope.launch{ sheetState.hide() }
-                    retry()
+                    getPhoto()
                 }
             )
                        },
@@ -228,17 +226,18 @@ fun QuizScreen(
                                 },
                             tint = Color.White)
 
-                        Text(text = "Landmarks - ${landmark.id + 1}",
+                        Text(text = "Guess the Country - ${landmark.id + 1}",
                             fontSize = 16.sp,
-                            fontFamily = FontFamily.SansSerif,
+                            fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                             color = Color.White,
                         )
 
                         Spacer(modifier = Modifier.width(50.dp))
 
-                        TopBarItem(icon = R.drawable.heart,
-                            modifier = Modifier.weight(1f),
-                            text = uiState.player.hearts.toString(),)
+                        TopBarItem(
+                            icon = R.drawable.heart,
+                            text = uiState.player.hearts.toString(),
+                            )
                     }
                 }
 
@@ -267,7 +266,7 @@ fun QuizScreen(
 
 
         AnimatedVisibility(
-            visible = textVisible,
+            visible = textVisible && uiState.answerCorrect!=true,
             enter = fadeIn(),
             exit = fadeOut()
         ){
@@ -287,8 +286,7 @@ fun QuizScreen(
             QuizOptionButton(text = options.elementAt(2),){
                 checkAnswer(it)
             }
-
-            QuizOptionButton(text = options.elementAt(3),){
+            QuizOptionButton(text = options.elementAtOrElse(3) { "Nigeria" },){
                 checkAnswer(it)
             }
         }
@@ -296,13 +294,14 @@ fun QuizScreen(
 
             if(uiState.fetchingMorePhotos != null){
                 FetchingMorePhotosDialog(progress = uiState.fetchingMorePhotos.progress) {
-                    retry()
+                    getPhoto()
                 }
             }
 
-            if(uiState.error != null || painterState is AsyncImagePainter.State.Error){
-                ErrorDialog(message = uiState.error?.message?:"null") {
-                    retry()
+            if((uiState.error != null || painterState is AsyncImagePainter.State.Error)){
+                ErrorDialog(message = uiState.error?.message?:"We couldn't load the photo. Check your internet connection.") {
+                    getPhoto()
+                    painter.restart()
                 }
             }
 
@@ -315,8 +314,7 @@ fun QuizScreen(
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.End){
+            verticalArrangement = Arrangement.Bottom,){
                 ShowBottomSheetButton(modifier = Modifier) {
                 scope.launch {
                     sheetState.expand()
@@ -324,8 +322,7 @@ fun QuizScreen(
             }
             }
         }
-
-    }
+        }
         //lottie
         if(uiState.answerCorrect == true){
             LottieAnimation(composition = lottie)

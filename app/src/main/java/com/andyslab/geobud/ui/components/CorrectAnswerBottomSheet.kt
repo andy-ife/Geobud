@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -159,6 +161,7 @@ fun CorrectAnswerBottomSheet(
                 contentPadding = PaddingValues(horizontal = 24.dp)
             ) {
                Text(text = "Continue",
+                   fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                    fontSize = 14.sp)
             }
 

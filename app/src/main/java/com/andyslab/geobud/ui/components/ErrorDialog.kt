@@ -29,7 +29,6 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = false,
-            usePlatformDefaultWidth = false,
             )
     ) {
         Card(

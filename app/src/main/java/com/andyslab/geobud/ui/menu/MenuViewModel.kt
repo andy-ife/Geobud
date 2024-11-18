@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
-import com.andyslab.geobud.domain.StartTimerLoopUseCase
+import com.andyslab.geobud.domain.StartTimerUseCase
 import com.andyslab.geobud.utils.Resource
 import com.andyslab.geobud.utils.timeMillisToString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,16 +32,18 @@ class MenuViewModel @Inject constructor(
     init {
         load()
         viewModelScope.launch{
-            StartTimerLoopUseCase.millisLeft.asSharedFlow().collect{ millisLeft ->
+            StartTimerUseCase.millisLeft.asSharedFlow().collect{ millisLeft ->
                 player.timeLeftTillNextHeart = millisLeft
-                _uiState.update {
-                    MenuUiState.Success(player, millisLeft.timeMillisToString())
-                }
-                if(millisLeft <= 0L && player.hearts < 3){
-                    player.hearts++
+                if(_uiState.value is MenuUiState.Success){
                     _uiState.update {
-                        MenuUiState.Success(player)
+                        MenuUiState.Success(player, millisLeft.timeMillisToString())
                     }
+                    if(millisLeft <= 0 && player.hearts < 3){
+                        player.hearts++
+                        _uiState.update {
+                            MenuUiState.Success(player)
+                        }
+                }
                 }
             }
         }

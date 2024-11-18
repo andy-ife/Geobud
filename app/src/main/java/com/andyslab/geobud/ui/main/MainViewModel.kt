@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.player.PlayerRepository
-import com.andyslab.geobud.domain.StartTimerLoopUseCase
+import com.andyslab.geobud.domain.StartTimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val playerRepo: PlayerRepository,
-    private val startTimerLoopUseCase: StartTimerLoopUseCase
+    private val startTimerUseCase: StartTimerUseCase
 ): ViewModel() {
 
     private var timerJob = Job()
@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
                 }
                 val timeLeft = player.timeLeftTillNextHeart
                 val newTimeLeft = (timeLeft - timeSinceLastSession) % 600000
-                startTimerLoopUseCase(newTimeLeft)
+                startTimerUseCase(newTimeLeft)
             }
         }
     }

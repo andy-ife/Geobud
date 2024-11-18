@@ -29,7 +29,6 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +41,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -53,7 +51,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImagePainter
-import coil3.compose.ImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -62,13 +59,12 @@ import com.andyslab.geobud.R
 import com.andyslab.geobud.ui.components.CorrectAnswerBottomSheet
 import com.andyslab.geobud.ui.components.ErrorDialog
 import com.andyslab.geobud.ui.components.FetchingMorePhotosDialog
+import com.andyslab.geobud.ui.components.OutOfHeartsDialog
 import com.andyslab.geobud.ui.components.QuizOptionButton
 import com.andyslab.geobud.ui.components.ShowBottomSheetButton
 import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.ui.nav.Screen
 import com.andyslab.geobud.utils.shimmerLoadingEffect
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.ktx.ExperimentGlideFlows
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -85,8 +81,7 @@ fun QuizScreen(
             uiState = uiState,
             getPhoto = viewModel::getPhoto,
             checkAnswer = viewModel::checkAnswer,
-            generateExclamation = viewModel::generateExclamation,
-            onPhotoLoadFailed = viewModel::onPhotoLoadFailed
+            generateExclamation = viewModel::generateExclamation
         )
     }
 }
@@ -103,7 +98,6 @@ fun QuizScreen(
     getPhoto: () -> Unit,
     checkAnswer: (String) -> Boolean,
     generateExclamation: () -> String,
-    onPhotoLoadFailed: () -> Unit,
     ){
     val landmark = uiState.player!!.currentLandmark!!
 
@@ -119,6 +113,7 @@ fun QuizScreen(
 
     var textVisible by remember{ mutableStateOf(true) }
     var showTimerPopup by remember { mutableStateOf(false) }
+    var showOutOfHeartsPopup by remember { mutableStateOf(false) }
 
     val painter: AsyncImagePainter = rememberAsyncImagePainter(landmark.photoUrl ?: R.drawable.placeholder_drawable)
     val painterState by painter.state.collectAsStateWithLifecycle()
@@ -305,15 +300,19 @@ fun QuizScreen(
         ){
             val options = uiState.player.currentOptions
             QuizOptionButton(text = options.elementAt(0),){
+                if(uiState.player.hearts == 0) showOutOfHeartsPopup = true
                 checkAnswer(it)
             }
             QuizOptionButton(text = options.elementAt(1),){
+                if(uiState.player.hearts == 0) showOutOfHeartsPopup = true
                 checkAnswer(it)
             }
             QuizOptionButton(text = options.elementAt(2),){
+                if(uiState.player.hearts == 0) showOutOfHeartsPopup = true
                 checkAnswer(it)
             }
             QuizOptionButton(text = options.elementAtOrElse(3) { "Nigeria" },){
+                if(uiState.player.hearts == 0) showOutOfHeartsPopup = true
                 checkAnswer(it)
             }
         }
@@ -329,6 +328,12 @@ fun QuizScreen(
                 ErrorDialog(message = uiState.error?.message?:"We couldn't load the photo. Please check your internet connection.") {
                     getPhoto()
                     painter.restart()
+                }
+            }
+
+            if(uiState.player.hearts == 0 && showOutOfHeartsPopup){
+                OutOfHeartsDialog(timer = uiState.timeTillNextHeart!!) {
+                    showOutOfHeartsPopup = false
                 }
             }
 

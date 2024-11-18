@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
-import com.andyslab.geobud.domain.StartTimerLoopUseCase
+import com.andyslab.geobud.domain.StartTimerUseCase
 import com.andyslab.geobud.utils.Resource
 import com.andyslab.geobud.utils.timeMillisToString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class QuizViewModel @Inject constructor(
     private val landmarkRepo: LandmarkRepository,
     private val playerRepo: PlayerRepository,
-    private val startTimerLoopUseCase: StartTimerLoopUseCase,
+    private val startTimerUseCase: StartTimerUseCase,
 ) : ViewModel(){
 
     private val _uiState = MutableStateFlow(QuizUiState())
@@ -41,17 +41,19 @@ class QuizViewModel @Inject constructor(
     init{
         getPhoto()
         viewModelScope.launch{
-            StartTimerLoopUseCase.millisLeft.asSharedFlow().collect{ millisLeft ->
+            StartTimerUseCase.millisLeft.asSharedFlow().collect{ millisLeft ->
                 player.timeLeftTillNextHeart = millisLeft
+                if (_uiState.value.answerCorrect != true){
                 _uiState.update {
                     it.copy(timeTillNextHeart = millisLeft.timeMillisToString())
                 }
-                if(millisLeft <= 0L && player.hearts < 3){
+                if(millisLeft <= 0 && player.hearts < 3){
                     player.hearts++
                     _uiState.update {
                         it.copy(player = player)
                     }
                 }
+            }
             }
         }
     }
@@ -62,6 +64,7 @@ class QuizViewModel @Inject constructor(
             val url = playerRepo.loadPlayerData().first().data!!
                 .also{ p ->
                     player = p
+                    delay(200) //give bottom sheet time to hide
                     _uiState.update {
                         it.copy(
                             player = p,
@@ -130,13 +133,13 @@ class QuizViewModel @Inject constructor(
                     it.copy(answerCorrect = true)
                 }
                 viewModelScope.launch {
-                    delay(200)
+                    delay(200) // give option buttons time to vanish
                     landmarkRepo.addProgress(player)
                 }
                 result = true
             }else{
                 player.hearts--
-                if(player.hearts == 2) startTimerLoopUseCase(600000)
+                if(player.hearts == 2) startTimerUseCase(600000)
                 _uiState.update {
                     it.copy(player = player.copy(), answerCorrect = false)
                 }
@@ -144,22 +147,8 @@ class QuizViewModel @Inject constructor(
                     playerRepo.savePlayerData(player)
                 }
             }
-        }else{
-            _uiState.update {
-                it.copy(outOfHearts = true)
-            }
         }
         return result
-    }
-
-    fun onPhotoLoadFailed(){
-        _uiState.update {
-            it.copy(
-                error = ErrorState("Couldn't load photo. Check your internet connection and try again."),
-                photoLoading = false,
-                fetchingMorePhotos = null,
-            )
-        }
     }
 
     fun generateExclamation(): String{
@@ -181,7 +170,7 @@ class QuizViewModel @Inject constructor(
 data class QuizUiState(
     // mutually exclusive
     val player: Player? = null,
-    val outOfHearts: Boolean = false,
+    //val outOfHearts: Boolean = false,
     val answerCorrect: Boolean? = null,
     //concurrent
     val photoLoading: Boolean = true,

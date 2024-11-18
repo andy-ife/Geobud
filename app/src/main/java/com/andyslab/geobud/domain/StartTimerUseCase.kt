@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class StartTimerLoopUseCase {
+class StartTimerUseCase {
     companion object{
         val millisLeft = MutableSharedFlow<Long>()
         var job = Job()
@@ -25,7 +25,7 @@ class StartTimerLoopUseCase {
                 m-=1000
                 delay(1000)
                 millisLeft.emit(m)
-                if(m <= 0L) m = 600000
+                if(m <= 0) m = 600000
             }
         }
     }

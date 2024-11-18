@@ -9,7 +9,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +33,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +57,8 @@ import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.ui.components.ErrorDialog
 import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.ui.nav.Screen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 //Stateful
 @Composable
@@ -82,6 +89,9 @@ fun MenuScreen(
         label = "loading bar anim"
     )
 
+    val scope = rememberCoroutineScope()
+    var showTimerPopup by remember{mutableStateOf(false)}
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -100,6 +110,22 @@ fun MenuScreen(
                 .size(200.dp)
                 .offset(y = -80.dp)
         )
+
+        if(uiState is MenuUiState.Success && showTimerPopup){
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 30.dp),) {
+                Box(modifier = Modifier.background(Color.Black)) {
+                    Text(
+                        text = uiState.timeTillNextHeart,
+                        color = Color.White,
+                        fontFamily = FontFamily(Font(R.font.bubblegum_sans))
+                    )
+                }
+            }
+        }
 
         AnimatedVisibility(
             visible = uiState is MenuUiState.Success,
@@ -123,6 +149,15 @@ fun MenuScreen(
 
                     val text = (uiState as MenuUiState.Success).data.hearts.toString()
                     TopBarItem(
+                        modifier = Modifier.clickable{
+                            if(uiState.data.hearts < 3){
+                                scope.launch{
+                                    showTimerPopup = true
+                                    delay(5000)
+                                    showTimerPopup = false
+                                }
+                            }
+                        },
                         icon = R.drawable.heart,
                         text = text
                     )

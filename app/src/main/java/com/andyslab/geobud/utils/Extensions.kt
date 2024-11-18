@@ -23,6 +23,8 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 
+
+/*----------------------Compose Extensions-----------------------------*/
 fun Modifier.shimmerLoadingEffect(): Modifier = composed{
     var size by remember{
         mutableStateOf(IntSize.Zero)

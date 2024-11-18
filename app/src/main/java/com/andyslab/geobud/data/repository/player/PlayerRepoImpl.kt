@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.local.sources.CountriesDataSource
 import com.andyslab.geobud.data.model.Landmark
@@ -29,6 +30,8 @@ class PlayerRepoImpl @Inject constructor(
     private val heartsKey = intPreferencesKey("player_hearts")
     private val progressKey = intPreferencesKey("player_progress")
     private val firstLaunchKey = booleanPreferencesKey("first_launch")
+    private val timestampKey = longPreferencesKey("last_session_timestamp")
+    private val timeLeftKey = longPreferencesKey("time_left_till_next_heart")
 
     companion object {
         var instance: Player? = null
@@ -42,6 +45,8 @@ class PlayerRepoImpl @Inject constructor(
                     val hearts = prefs[heartsKey] ?: 3
                     val progress = prefs[progressKey] ?: 0
                     val isFirstLaunch = prefs[firstLaunchKey] ?: true
+                    val timestamp = prefs[timestampKey] ?: 0L
+                    val timeLeft = prefs[timeLeftKey] ?: 0L
 
                     val landmark = db.dao.getLandmarkById(progress).first()
 
@@ -50,7 +55,9 @@ class PlayerRepoImpl @Inject constructor(
                         currentLandmark = landmark,
                         currentOptions = generateOptions(landmark),
                         hearts = hearts,
-                        isFirstLaunch = isFirstLaunch
+                        isFirstLaunch = isFirstLaunch,
+                        lastSessionTimestamp = timestamp,
+                        timeLeftTillNextHeart = timeLeft,
                     )
                 }catch(e: IOException){
                     emit(Resource.Error("Error loading player data"))
@@ -70,6 +77,8 @@ class PlayerRepoImpl @Inject constructor(
                     prefs[heartsKey] = player.hearts
                     prefs[progressKey] = player.progress
                     prefs[firstLaunchKey] = player.isFirstLaunch
+                    prefs[timestampKey] = player.lastSessionTimestamp
+                    prefs[timeLeftKey] = player.timeLeftTillNextHeart
                 }
             }catch(e: IOException){
                 Log.d("Datastore IO Exception", e.message.toString())

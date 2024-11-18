@@ -69,6 +69,7 @@ import com.andyslab.geobud.ui.nav.Screen
 import com.andyslab.geobud.utils.shimmerLoadingEffect
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.ktx.ExperimentGlideFlows
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //Stateful
@@ -117,6 +118,7 @@ fun QuizScreen(
     val lottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
     var textVisible by remember{ mutableStateOf(true) }
+    var showTimerPopup by remember { mutableStateOf(false) }
 
     val painter: AsyncImagePainter = rememberAsyncImagePainter(landmark.photoUrl ?: R.drawable.placeholder_drawable)
     val painterState by painter.state.collectAsStateWithLifecycle()
@@ -235,9 +237,34 @@ fun QuizScreen(
                         Spacer(modifier = Modifier.width(50.dp))
 
                         TopBarItem(
+                            modifier = Modifier.clickable{
+                                if(uiState.player.hearts < 3){
+                                    scope.launch{
+                                        showTimerPopup = true
+                                        delay(5000)
+                                        showTimerPopup = false
+                                    }
+                                }
+                            },
                             icon = R.drawable.heart,
                             text = uiState.player.hearts.toString(),
                             )
+                    }
+                }
+
+                if(showTimerPopup && textVisible){
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp),) {
+                        Box(modifier = Modifier.background(Color.Black)) {
+                            Text(
+                                text = uiState.timeTillNextHeart ?: "00:00",
+                                color = Color.White,
+                                fontFamily = FontFamily(Font(R.font.bubblegum_sans))
+                            )
+                        }
                     }
                 }
 
@@ -299,7 +326,7 @@ fun QuizScreen(
             }
 
             if((uiState.error != null || painterState is AsyncImagePainter.State.Error)){
-                ErrorDialog(message = uiState.error?.message?:"We couldn't load the photo. Check your internet connection.") {
+                ErrorDialog(message = uiState.error?.message?:"We couldn't load the photo. Please check your internet connection.") {
                     getPhoto()
                     painter.restart()
                 }

@@ -12,6 +12,7 @@ import com.andyslab.geobud.data.repository.landmark.LandmarkRepoImpl
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
 import com.andyslab.geobud.data.repository.player.PlayerRepository
+import com.andyslab.geobud.domain.StartTimerLoopUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,5 +82,11 @@ class AppModule {
         repo: PlayerRepository
     ): LandmarkRepository{
         return LandmarkRepoImpl(db, api, repo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTimerUseCase(): StartTimerLoopUseCase{
+        return StartTimerLoopUseCase()
     }
 }

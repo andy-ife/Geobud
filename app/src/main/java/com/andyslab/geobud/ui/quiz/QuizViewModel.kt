@@ -5,11 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
+import com.andyslab.geobud.domain.StartTimerLoopUseCase
 import com.andyslab.geobud.utils.Resource
+import com.andyslab.geobud.utils.timeMillisToString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -19,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val landmarkRepo: LandmarkRepository,
-    private val playerRepo: PlayerRepository
+    private val playerRepo: PlayerRepository,
+    private val startTimerLoopUseCase: StartTimerLoopUseCase,
 ) : ViewModel(){
 
     private val _uiState = MutableStateFlow(QuizUiState())
@@ -33,7 +38,23 @@ class QuizViewModel @Inject constructor(
 
     private lateinit var player: Player
 
-    init{ getPhoto() }
+    init{
+        getPhoto()
+        viewModelScope.launch{
+            StartTimerLoopUseCase.millisLeft.asSharedFlow().collect{ millisLeft ->
+                player.timeLeftTillNextHeart = millisLeft
+                _uiState.update {
+                    it.copy(timeTillNextHeart = millisLeft.timeMillisToString())
+                }
+                if(millisLeft <= 0L && player.hearts < 3){
+                    player.hearts++
+                    _uiState.update {
+                        it.copy(player = player)
+                    }
+                }
+            }
+        }
+    }
 
     fun getPhoto() {
         job.cancel()
@@ -109,14 +130,18 @@ class QuizViewModel @Inject constructor(
                     it.copy(answerCorrect = true)
                 }
                 viewModelScope.launch {
-                    delay(100)
+                    delay(200)
                     landmarkRepo.addProgress(player)
                 }
                 result = true
             }else{
                 player.hearts--
+                if(player.hearts == 2) startTimerLoopUseCase(600000)
                 _uiState.update {
                     it.copy(player = player.copy(), answerCorrect = false)
+                }
+                viewModelScope.launch {
+                    playerRepo.savePlayerData(player)
                 }
             }
         }else{
@@ -143,6 +168,14 @@ class QuizViewModel @Inject constructor(
         )
         return exclams.random()
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        player = player.copy(lastSessionTimestamp = System.currentTimeMillis())
+        GlobalScope.launch{
+            playerRepo.savePlayerData(player)
+        }
+    }
 }
 
 data class QuizUiState(
@@ -154,6 +187,7 @@ data class QuizUiState(
     val photoLoading: Boolean = true,
     val error: ErrorState? = null,
     val fetchingMorePhotos: FetchingState? = null,
+    val timeTillNextHeart: String? = "00:00",
     )
 
 data class ErrorState(val message: String)

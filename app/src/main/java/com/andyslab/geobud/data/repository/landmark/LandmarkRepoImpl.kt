@@ -61,17 +61,11 @@ class LandmarkRepoImpl @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun getLandmarkById(id: Int): Flow<Landmark> {
-        return withContext(Dispatchers.IO){
-            db.dao.getLandmarkById(id)
-        }
-    }
-
     override suspend fun addProgress(player: Player){
         withContext(Dispatchers.IO){
             player.run{
                 progress++
-                currentLandmark = getLandmarkById(progress).first()
+                currentLandmark = db.dao.getLandmarkById(progress).first()
                 currentOptions = playerRepo.generateOptions(currentLandmark!!)
                 isFirstLaunch = false
 

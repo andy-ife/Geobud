@@ -7,7 +7,7 @@ class CountriesDataSource{
         "Cambodia","China","India","Indonesia","Georgia","India","Indonesia","Iran","Iraq","Israel",
         "Japan","Jordan","Kazakhstan","Kuwait","Kyrgyzstan","Laos","Lebanon","Malaysia","Maldives","Mongolia","Myanmar",
         "Nepal","North Korea","Oman","Pakistan","Philippines","Qatar","Saudi Arabia","Singapore","South Korea",
-        "Sri Lanka","Syria","Tajikistan","Thailand","Timor-Leste","Turkmenistan","United Arab Emirates",
+        "Sri Lanka","Syria","Taiwan","Tajikistan","Thailand","Timor-Leste","Turkmenistan","United Arab Emirates",
         "Uzbekistan","Vietnam","Yemen")
     }
 
@@ -37,7 +37,7 @@ class CountriesDataSource{
             "Croatia","Cyprus","Czech Republic","Denmark","Estonia","England","Finland","France","Germany","Greece","Hungary",
             "Iceland","Ireland","Italy","Latvia","Liechtenstein","Lithuania","Luxembourg","Malta","Moldova","Monaco",
             "Montenegro","Netherlands","North Macedonia","Norway","Poland","Portugal","Romania","Russia","San Marino",
-            "Serbia","Slovakia","Spain","Sweden","Switzerland","Turkey","Ukraine","United Kingdom","Vatican City")
+            "Serbia","Slovakia","Spain","Sweden","Switzerland","Turkey","Ukraine","Vatican City")
     }
 
     val OC by lazy {

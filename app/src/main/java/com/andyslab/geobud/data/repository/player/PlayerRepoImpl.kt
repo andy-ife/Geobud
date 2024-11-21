@@ -39,7 +39,7 @@ class PlayerRepoImpl @Inject constructor(
 
     override suspend fun loadPlayerData(): Flow<Resource<Player>> {
         return flow {
-            if(instance == null){
+            if(instance == null || instance?.currentLandmark?.photoUrl == null){
                 try{
                     val prefs = dataStore.data.first()
                     val hearts = prefs[heartsKey] ?: 3

@@ -27,12 +27,15 @@ class LandmarkRepoImpl @Inject constructor(
     override suspend fun fetchLandmarkPhotos(limit: Int): Flow<Resource<Float>> {
         return flow {
             val player = playerRepo.loadPlayerData().first { it is Resource.Success }.data ?: return@flow
-
+            val maxId = db.dao.getMaxId().first()
             for(i in player.progress.until(player.progress+limit)){
                 val p = (i.toFloat()/(player.progress+limit).toFloat()) + 0.05f
                 emit(Resource.Loading(p)) // loading progress
 
-                if(i > db.dao.getMaxId().first()) return@flow
+                if(i > maxId) {
+                    emit(Resource.Success())
+                    return@flow
+                }
 
                 var landmark = db.dao.getLandmarkById(i).first()
                 if(landmark.photoUrl == null){
@@ -63,13 +66,14 @@ class LandmarkRepoImpl @Inject constructor(
 
     override suspend fun addProgress(player: Player){
         withContext(Dispatchers.IO){
-            player.run{
-                progress++
-                currentLandmark = db.dao.getLandmarkById(progress).first()
-                currentOptions = playerRepo.generateOptions(currentLandmark!!)
-                isFirstLaunch = false
-
-                playerRepo.savePlayerData(this)
+            if(player.progress < db.dao.getMaxId().first()){
+                player.run{
+                    progress++
+                    currentLandmark = db.dao.getLandmarkById(progress).first()
+                    currentOptions = playerRepo.generateOptions(currentLandmark!!)
+                    isFirstLaunch = false
+                    playerRepo.savePlayerData(this)
+                }
             }
         }
     }

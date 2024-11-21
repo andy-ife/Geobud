@@ -12,7 +12,7 @@ interface LandmarkDao {
     fun getLandmarkById(id: Int): Flow<Landmark>
 
     @Update(Landmark::class)
-    suspend fun updateLandmark(landmark: Landmark)
+    fun updateLandmark(landmark: Landmark)
 
     @Query("SELECT MAX(id) FROM landmark")
     fun getMaxId(): Flow<Int>

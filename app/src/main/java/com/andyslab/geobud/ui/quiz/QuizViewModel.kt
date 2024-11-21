@@ -152,10 +152,9 @@ class QuizViewModel @Inject constructor(
     }
 
     fun generateExclamation(): String{
-        val exclams = setOf(
+        return setOf(
             "Nice!", "Great job!", "You're on fire!", "Amazing!", "Great!", "Cool!", "Geo-master!"
-        )
-        return exclams.random()
+        ).random()
     }
 
     override fun onCleared() {
@@ -170,13 +169,12 @@ class QuizViewModel @Inject constructor(
 data class QuizUiState(
     // mutually exclusive
     val player: Player? = null,
-    //val outOfHearts: Boolean = false,
     val answerCorrect: Boolean? = null,
+    val timeTillNextHeart: String? = "00:00",
     //concurrent
     val photoLoading: Boolean = true,
     val error: ErrorState? = null,
     val fetchingMorePhotos: FetchingState? = null,
-    val timeTillNextHeart: String? = "00:00",
     )
 
 data class ErrorState(val message: String)

@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -66,7 +67,10 @@ import com.andyslab.geobud.ui.components.QuizOptionButton
 import com.andyslab.geobud.ui.components.ShowBottomSheetButton
 import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.ui.nav.Screen
+import com.andyslab.geobud.utils.findActivity
+import com.andyslab.geobud.utils.hideSystemUI
 import com.andyslab.geobud.utils.shimmerLoadingEffect
+import com.andyslab.geobud.utils.showSystemUI
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -101,6 +105,8 @@ fun QuizScreen(
     checkAnswer: (String) -> Boolean,
     generateExclamation: () -> String,
     ){
+    val context = LocalContext.current
+    val activity = context.findActivity()
     val landmark = uiState.player!!.currentLandmark!!
 
     val sheetState = rememberStandardBottomSheetState(
@@ -155,6 +161,10 @@ fun QuizScreen(
                         when (it.action) {
                             MotionEvent.ACTION_UP -> {
                                 textVisible = !textVisible
+                                if(textVisible)
+                                    activity.showSystemUI()
+                                else
+                                    activity.hideSystemUI()
                             }
                             else -> {}
                         }
@@ -209,7 +219,7 @@ fun QuizScreen(
                     Row (
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().padding(top = 30.dp, bottom = 10.dp)
                     ){
 
                         Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -296,7 +306,7 @@ fun QuizScreen(
         ){
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 20.dp),
+            .padding(bottom = 60.dp),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
@@ -347,7 +357,7 @@ fun QuizScreen(
         ) {
             Column(modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(horizontal = 20.dp, vertical = 60.dp),
             verticalArrangement = Arrangement.Bottom,){
                 ShowBottomSheetButton(modifier = Modifier) {
                 scope.launch {

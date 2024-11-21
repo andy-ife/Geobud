@@ -1,6 +1,9 @@
 package com.andyslab.geobud.utils
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.view.MotionEvent
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -22,6 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 
 /*----------------------Compose Extensions-----------------------------*/
@@ -91,4 +97,27 @@ fun Modifier.onClickWithScaleAnim(scaleDown: Float, onClick: () -> Unit = {}) : 
                 }
             )
 
+}
+
+/*----------------------Activity extensions-------------------------*/
+fun ComponentActivity.hideSystemUI(){
+    val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+    windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat
+        .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+}
+
+fun ComponentActivity.showSystemUI(){
+    val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+    windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+    windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+}
+
+fun Context.findActivity(): ComponentActivity {
+    var context = this
+    while(context is ContextWrapper){
+        if(context is ComponentActivity) return context
+        context = context.baseContext
+    }
+    throw IllegalStateException("no activity")
 }

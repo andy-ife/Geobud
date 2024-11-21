@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
@@ -48,6 +49,7 @@ fun CorrectAnswerBottomSheet(
     addedCoins: Int,
     addedStars: Int,
     landmark: Landmark,
+    savePhotoBtnClick: () -> Unit = {},
     continueButtonClick: () -> Unit = {},
     ){
 
@@ -55,7 +57,7 @@ fun CorrectAnswerBottomSheet(
         .fillMaxWidth()
         .wrapContentHeight()
         .background(Color.White)
-        .padding(20.dp),
+        .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 60.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start){
         
@@ -122,36 +124,59 @@ fun CorrectAnswerBottomSheet(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row(horizontalArrangement = Arrangement.Start,
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             ){
-            IconButton(onClick = { /*TODO*/ },
-                modifier = Modifier.onClickWithScaleAnim(0.9f,),
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color(0xFF227B14)
-                )) {
-                Icon(imageVector = Icons.Filled.ThumbUp,
-                    contentDescription = null)
-            }
+//            IconButton(onClick = { /*TODO*/ },
+//                modifier = Modifier.onClickWithScaleAnim(0.9f,),
+//                colors = IconButtonDefaults.iconButtonColors(
+//                    containerColor = Color.Transparent,
+//                    contentColor = Color(0xFF227B14)
+//                )) {
+//                Icon(imageVector = Icons.Filled.ThumbUp,
+//                    contentDescription = null)
+//            }
+//
+//            IconButton(onClick = { /*TODO*/ },
+//                modifier = Modifier
+//                    .onClickWithScaleAnim(0.9f)
+//                    .rotate(180f)
+//                    .offset(x = 10.dp),
+//                colors = IconButtonDefaults.iconButtonColors(
+//                    containerColor = Color.Transparent,
+//                    contentColor = Color(0xFFDD2929)
+//                )) {
+//                Icon(imageVector = Icons.Filled.ThumbUp,
+//                    contentDescription = null)
+//            }
 
-            IconButton(onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .onClickWithScaleAnim(0.9f)
-                    .rotate(180f)
-                    .offset(x = 10.dp),
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color(0xFFDD2929)
-                )) {
-                Icon(imageVector = Icons.Filled.ThumbUp,
-                    contentDescription = null)
-            }
-
-            Spacer(modifier = Modifier.width(100.dp))
+//            Spacer(modifier = Modifier.width(100.dp))
 
             TextButton(onClick = { /*TODO*/ },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth(0.45f)
+                    .onClickWithScaleAnim(0.9f) { continueButtonClick() },
+                colors = ButtonDefaults.textButtonColors(
+                    containerColor = Color(0xFF4CAF50),
+                    contentColor = Color.White
+                ),
+                elevation = ButtonDefaults.buttonElevation(2.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp)
+            ) {
+                Text(text = "Save photo",
+                    fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                    fontSize = 14.sp)
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(painter = painterResource(
+                    id = R.drawable.outline_file_download_24),
+                    contentDescription = "save photo",
+                    modifier = Modifier.size(22.dp),
+                    tint = Color.White
+                )
+            }
+
+            TextButton(onClick = { /*TODO*/ },
+                modifier = Modifier.fillMaxWidth(0.811f)
                     .onClickWithScaleAnim(0.9f) { continueButtonClick() },
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = Color(0xFF1976D2),
@@ -167,4 +192,15 @@ fun CorrectAnswerBottomSheet(
 
         }
     }
+}
+
+@Preview
+@Composable
+fun BottomSheetPreview(){
+    CorrectAnswerBottomSheet(
+        exclamation = "Nice!",
+        addedCoins = 20,
+        addedStars = 1,
+        landmark = Landmark(0,"Streets of Flame","England", "EU", "Hogwarts", "Lorem ipsum delerat sancti poltis du fonti dafdfda", "", "", "" )
+    )
 }

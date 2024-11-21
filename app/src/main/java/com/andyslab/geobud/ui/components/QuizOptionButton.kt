@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
@@ -64,8 +65,11 @@ fun QuizOptionButton(
         //contentPadding = PaddingValues(2.dp),
         modifier = modifier.width(180.dp)
     ) {
-        Text(text = text,
+        Text(
+            text = text,
             fontSize = 14.sp,
-            fontFamily = FontFamily(Font(R.font.bubblegum_sans)),)
+            fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+            textAlign = TextAlign.Center
+            )
     }
 }

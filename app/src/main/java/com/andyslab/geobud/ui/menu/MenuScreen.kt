@@ -120,7 +120,7 @@ fun MenuScreen(
                 horizontalAlignment = Alignment.End,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 80.dp),) {
+                    .padding(horizontal = 20.dp, vertical = 100.dp),) {
                 Box(modifier = Modifier.background(Color(0xB2000000), RoundedCornerShape(8.dp)).padding(8.dp)) {
                     Text(
                         text = "More in ${uiState.timeTillNextHeart}",
@@ -138,7 +138,7 @@ fun MenuScreen(
                 Row (
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp),
+                        .padding(horizontal = 20.dp, vertical = 40.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ){
                     IconButton(

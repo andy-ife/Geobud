@@ -28,6 +28,7 @@ class MenuViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var player = Player()
+    private var maxId = 0
 
     init {
         load()
@@ -36,12 +37,12 @@ class MenuViewModel @Inject constructor(
                 player.timeLeftTillNextHeart = millisLeft
                 if(_uiState.value is MenuUiState.Success){
                     _uiState.update {
-                        MenuUiState.Success(player, millisLeft.timeMillisToString())
+                        MenuUiState.Success(player, millisLeft.timeMillisToString(), maxId = maxId)
                     }
                     if(millisLeft <= 0 && player.hearts < 3){
                         player.hearts++
                         _uiState.update {
-                            MenuUiState.Success(player)
+                            MenuUiState.Success(player, maxId = maxId)
                         }
                 }
                 }
@@ -65,8 +66,8 @@ class MenuViewModel @Inject constructor(
                           }
                       }
                       is Resource.Success -> {
-                          val player = playerRepo.loadPlayerData().first{ it is Resource.Success }.data!!.also{ player = it }
-                          val maxId = landmarkRepo.getMaxId()
+                          player = playerRepo.loadPlayerData().first{ it is Resource.Success }.data!!.also{ player = it }
+                          maxId = landmarkRepo.getMaxId()
                           _uiState.update {
                               MenuUiState.Success(data = player, maxId = maxId)
                           }

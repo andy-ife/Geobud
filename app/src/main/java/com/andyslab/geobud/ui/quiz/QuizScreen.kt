@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.BottomSheetScaffold
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -253,9 +255,9 @@ fun QuizScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp),) {
-                        Box(modifier = Modifier.background(Color.Black)) {
+                        Box(modifier = Modifier.background(Color(0xB2000000), RoundedCornerShape(8.dp)).padding(8.dp)) {
                             Text(
-                                text = uiState.timeTillNextHeart ?: "00:00",
+                                text = "More in ${uiState.timeTillNextHeart ?: "00 : 00"}",
                                 color = Color.White,
                                 fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                             )

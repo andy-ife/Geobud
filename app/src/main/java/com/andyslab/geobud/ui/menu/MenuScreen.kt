@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -115,13 +116,14 @@ fun MenuScreen(
 
         if(uiState is MenuUiState.Success && showTimerPopup){
             Column(
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.End,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 30.dp),) {
-                Box(modifier = Modifier.background(Color.Black)) {
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp, vertical = 80.dp),) {
+                Box(modifier = Modifier.background(Color(0xB2000000), RoundedCornerShape(8.dp)).padding(8.dp)) {
                     Text(
-                        text = uiState.timeTillNextHeart,
+                        text = "More in ${uiState.timeTillNextHeart}",
                         color = Color.White,
                         fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                     )
@@ -134,7 +136,9 @@ fun MenuScreen(
             enter = slideInVertically(),
             ) {
                 Row (
-                    modifier = Modifier.fillMaxSize().padding(20.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ){
                     IconButton(
@@ -172,8 +176,8 @@ fun MenuScreen(
         ) {
             Column (
                 modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 100.dp, horizontal = 60.dp),
+                    .fillMaxSize()
+                    .padding(vertical = 100.dp, horizontal = 60.dp),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
@@ -210,7 +214,10 @@ fun MenuScreen(
                                 progress = {
                                     state.data.progress.toFloat() / state.maxId.toFloat()
                                 },
-                                modifier = Modifier.height(16.dp).width(160.dp).border(2.dp, Color.Black),
+                                modifier = Modifier
+                                    .height(16.dp)
+                                    .width(160.dp)
+                                    .border(2.dp, Color.Black),
                                 color = Color(0xFF37833A),
                                 strokeCap = StrokeCap.Square,
                                 gapSize = 0.dp,

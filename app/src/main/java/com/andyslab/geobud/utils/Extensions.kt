@@ -10,6 +10,8 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,6 +99,19 @@ fun Modifier.onClickWithScaleAnim(scaleDown: Float, onClick: () -> Unit = {}) : 
                 }
             )
 
+}
+
+fun Modifier.clickableNoRipple(
+    interactionSource: MutableInteractionSource,
+    onClick: () -> Unit
+) = run {
+    this.then(
+        Modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClick = {onClick()}
+        )
+    )
 }
 
 /*----------------------Activity extensions-------------------------*/

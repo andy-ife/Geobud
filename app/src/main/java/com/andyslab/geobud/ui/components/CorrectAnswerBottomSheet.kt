@@ -2,6 +2,7 @@ package com.andyslab.geobud.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
 import com.andyslab.geobud.data.model.Landmark
+import com.andyslab.geobud.utils.clickableNoRipple
 import com.andyslab.geobud.utils.onClickWithScaleAnim
 
 
@@ -49,9 +53,13 @@ fun CorrectAnswerBottomSheet(
     addedCoins: Int,
     addedStars: Int,
     landmark: Landmark,
+    photographer: String = "",
+    photographerUrlClick: () -> Unit = {},
     savePhotoBtnClick: () -> Unit = {},
     continueButtonClick: () -> Unit = {},
     ){
+
+    val interactionSource = remember{ MutableInteractionSource() }
 
     Column(modifier = modifier
         .fillMaxWidth()
@@ -121,6 +129,19 @@ fun CorrectAnswerBottomSheet(
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center)
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            text = photographer,
+            modifier = Modifier.clickableNoRipple(interactionSource){
+              photographerUrlClick()
+            },
+            color = Color(0xFF1976d2),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -198,6 +219,7 @@ fun CorrectAnswerBottomSheet(
 @Composable
 fun BottomSheetPreview(){
     CorrectAnswerBottomSheet(
+        photographer = "Photo by John Doe",
         exclamation = "Nice!",
         addedCoins = 20,
         addedStars = 1,

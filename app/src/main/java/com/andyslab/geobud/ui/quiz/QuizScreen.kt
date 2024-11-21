@@ -1,5 +1,8 @@
 package com.andyslab.geobud.ui.quiz
+import android.content.Intent
+import android.net.Uri
 import android.view.MotionEvent
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -7,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,12 +57,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andyslab.geobud.R
+import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.ui.components.CorrectAnswerBottomSheet
 import com.andyslab.geobud.ui.components.ErrorDialog
 import com.andyslab.geobud.ui.components.FetchingMorePhotosDialog
@@ -67,6 +74,7 @@ import com.andyslab.geobud.ui.components.QuizOptionButton
 import com.andyslab.geobud.ui.components.ShowBottomSheetButton
 import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.ui.nav.Screen
+import com.andyslab.geobud.utils.clickableNoRipple
 import com.andyslab.geobud.utils.findActivity
 import com.andyslab.geobud.utils.hideSystemUI
 import com.andyslab.geobud.utils.shimmerLoadingEffect
@@ -80,10 +88,14 @@ fun QuizScreen(
     navController: NavHostController,
     viewModel: QuizViewModel = hiltViewModel()
 ){
+    val context = LocalContext.current
+    val activity = context.findActivity()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     if(uiState.player != null){
         QuizScreen(
             navController = navController,
+            activity = activity,
             uiState = uiState,
             getPhoto = viewModel::getPhoto,
             checkAnswer = viewModel::checkAnswer,
@@ -100,13 +112,12 @@ fun QuizScreen(
 @Composable
 fun QuizScreen(
     navController: NavHostController,
+    activity: ComponentActivity,
     uiState: QuizUiState,
     getPhoto: () -> Unit,
     checkAnswer: (String) -> Boolean,
     generateExclamation: () -> String,
     ){
-    val context = LocalContext.current
-    val activity = context.findActivity()
     val landmark = uiState.player!!.currentLandmark!!
 
     val sheetState = rememberStandardBottomSheetState(
@@ -126,6 +137,8 @@ fun QuizScreen(
     val painter: AsyncImagePainter = rememberAsyncImagePainter(landmark.photoUrl ?: R.drawable.placeholder_drawable)
     val painterState by painter.state.collectAsStateWithLifecycle()
 
+    val interactionSource = remember{ MutableInteractionSource() }
+
     LaunchedEffect(uiState) {
         if(uiState.answerCorrect == true){
             sheetState.expand()
@@ -141,6 +154,14 @@ fun QuizScreen(
                 addedCoins = 20,
                 addedStars = 1,
                 landmark = landmark,
+                photographer = "Photo by ${landmark.photographer}",
+                photographerUrlClick = {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(landmark.photographerUrl)
+                    val title = "Go to photographer's page"
+                    val chooser = Intent.createChooser(intent, title)
+                    activity.startActivity(chooser)
+                },
                 continueButtonClick = {
                     scope.launch{ sheetState.hide() }
                     getPhoto()
@@ -161,11 +182,12 @@ fun QuizScreen(
                         when (it.action) {
                             MotionEvent.ACTION_UP -> {
                                 textVisible = !textVisible
-                                if(textVisible)
+                                if (textVisible)
                                     activity.showSystemUI()
                                 else
                                     activity.hideSystemUI()
                             }
+
                             else -> {}
                         }
                         true
@@ -205,6 +227,26 @@ fun QuizScreen(
                     ))
             }
 
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp, vertical = 40.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.End
+                ){
+                AsyncImage(
+                    model = "https://images.pexels.com/lib/api/pexels-white.png",
+                    contentDescription = null,
+                    modifier = Modifier.size(60.dp).clickableNoRipple(interactionSource){
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = Uri.parse("https://www.pexels.com")
+                        val title = "Go to pexels.com"
+                        val chooser = Intent.createChooser(intent, title)
+                        activity.startActivity(chooser)
+                    }
+                )
+            }
+
             Column(verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -219,7 +261,9 @@ fun QuizScreen(
                     Row (
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier.fillMaxWidth().padding(top = 30.dp, bottom = 10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 30.dp, bottom = 10.dp)
                     ){
 
                         Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -265,7 +309,9 @@ fun QuizScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp),) {
-                        Box(modifier = Modifier.background(Color(0xB2000000), RoundedCornerShape(8.dp)).padding(8.dp)) {
+                        Box(modifier = Modifier
+                            .background(Color(0xB2000000), RoundedCornerShape(8.dp))
+                            .padding(8.dp)) {
                             Text(
                                 text = "More in ${uiState.timeTillNextHeart ?: "00 : 00"}",
                                 color = Color.White,
@@ -357,7 +403,7 @@ fun QuizScreen(
         ) {
             Column(modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 60.dp),
+                .padding(horizontal = 20.dp, vertical = 100.dp),
             verticalArrangement = Arrangement.Bottom,){
                 ShowBottomSheetButton(modifier = Modifier) {
                 scope.launch {

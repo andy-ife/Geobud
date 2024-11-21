@@ -66,8 +66,9 @@ class MenuViewModel @Inject constructor(
                       }
                       is Resource.Success -> {
                           val player = playerRepo.loadPlayerData().first{ it is Resource.Success }.data!!.also{ player = it }
+                          val maxId = landmarkRepo.getMaxId()
                           _uiState.update {
-                              MenuUiState.Success(player)
+                              MenuUiState.Success(data = player, maxId = maxId)
                           }
                       }
                   }
@@ -86,5 +87,5 @@ class MenuViewModel @Inject constructor(
 sealed interface MenuUiState{
     data class Loading(val progress: Float): MenuUiState
     data class Error(val message: String): MenuUiState
-    data class Success(val data: Player, val timeTillNextHeart: String = "00:00"): MenuUiState
+    data class Success(val data: Player, val timeTillNextHeart: String = "00:00", val maxId: Int = 0): MenuUiState
 }

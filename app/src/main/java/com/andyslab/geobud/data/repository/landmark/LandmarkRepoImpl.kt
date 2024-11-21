@@ -77,4 +77,8 @@ class LandmarkRepoImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getMaxId(): Int {
+        return withContext(Dispatchers.IO){ db.dao.getMaxId().first() }
+    }
 }

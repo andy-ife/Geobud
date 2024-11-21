@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface LandmarkRepository {
     suspend fun fetchLandmarkPhotos(limit: Int): Flow<Resource<Float>>
     suspend fun addProgress(player: Player)
+    suspend fun getMaxId(): Int
 }

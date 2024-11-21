@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -185,11 +187,44 @@ fun MenuScreen(
                     ),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                Text(
-                    text = "Start",
-                    fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
-                    fontSize = 20.sp
-                )
+                val state = uiState as MenuUiState.Success
+                if(state.data.isFirstLaunch){
+                    Text(
+                        text = "Start",
+                        fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
+                        fontSize = 20.sp
+                    )
+                }else{
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ){
+                        Text(
+                            text = "Continue",
+                            fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
+                            fontSize = 20.sp
+                        )
+
+                        Box(contentAlignment = Alignment.Center){
+                            LinearProgressIndicator(
+                                progress = {
+                                    state.data.progress.toFloat() / state.maxId.toFloat()
+                                },
+                                modifier = Modifier.height(16.dp).width(160.dp).border(2.dp, Color.Black),
+                                color = Color(0xFF37833A),
+                                strokeCap = StrokeCap.Square,
+                                gapSize = 0.dp,
+                                trackColor = Color(0xFF1B421C),
+                                drawStopIndicator = {}
+                            )
+                            Text(
+                                text = "${state.data.progress+1} of ${state.maxId+1}",
+                                fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+                }
             }
         }
         }
@@ -243,7 +278,10 @@ fun MenuScreen(
 fun MenuScreenPreview(){
     MenuScreen(
         rememberNavController(),
-        MenuUiState.Success(Player()),
+        MenuUiState.Success(
+            Player(isFirstLaunch = false, progress = 36),
+            maxId = 71,
+        ),
         {}
     )
 }

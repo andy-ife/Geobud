@@ -42,7 +42,7 @@ class LandmarkRepoImpl @Inject constructor(
                     try{
                         val response = api.getLandmarkPhoto(
                             searchTerm = landmark.name,
-                            page = Random.nextInt(1,3),
+                            page = Random.nextInt(1,4),
                             perPage = 1,
                         )
                         if(response.isSuccessful && response.body() != null){

@@ -77,6 +77,14 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    fun resetProgress(){
+        viewModelScope.launch{
+            landmarkRepo.resetProgress()
+            player = Player()
+            load()
+        }
+    }
+
     override fun onCleared() {
         player = player.copy(lastSessionTimestamp = System.currentTimeMillis())
         GlobalScope.launch{

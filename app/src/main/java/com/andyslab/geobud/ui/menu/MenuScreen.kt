@@ -1,6 +1,9 @@
 package com.andyslab.geobud.ui.menu
 
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -8,6 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -44,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -57,8 +62,11 @@ import androidx.navigation.compose.rememberNavController
 import com.andyslab.geobud.R
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.ui.components.ErrorDialog
+import com.andyslab.geobud.ui.components.ResetProgressDialog
+import com.andyslab.geobud.ui.components.SettingsDialog
 import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.ui.nav.Screen
+import com.andyslab.geobud.utils.findActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -68,15 +76,19 @@ fun MenuScreen(
     navController: NavHostController,
     viewModel: MenuViewModel = hiltViewModel()
 ){
+    val context = LocalContext.current
+    val activity = context.findActivity()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    MenuScreen(navController, uiState, viewModel::load)
+    MenuScreen(navController, activity, uiState, viewModel::resetProgress, viewModel::load)
 }
 
 //Stateless
 @Composable
 fun MenuScreen(
     navController: NavHostController,
+    activity: ComponentActivity,
     uiState: MenuUiState,
+    resetProgress: () -> Unit,
     load: () -> Unit,
     ) {
 
@@ -93,6 +105,9 @@ fun MenuScreen(
 
     val scope = rememberCoroutineScope()
     var showTimerPopup by remember{mutableStateOf(false)}
+    var showSettings by remember{mutableStateOf(false)}
+    var showResetProgressDialog by remember{mutableStateOf(false)}
+
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -133,6 +148,7 @@ fun MenuScreen(
         AnimatedVisibility(
             visible = uiState is MenuUiState.Success,
             enter = slideInVertically(),
+            exit = slideOutVertically(),
             ) {
                 Row (
                     modifier = Modifier
@@ -141,7 +157,7 @@ fun MenuScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ){
                     IconButton(
-                        onClick = {},
+                        onClick = {showSettings = true},
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Transparent
                         )
@@ -152,10 +168,10 @@ fun MenuScreen(
                         )
                     }
 
-                    val text = (uiState as MenuUiState.Success).data.hearts.toString()
+                    val text = if(uiState is MenuUiState.Success)uiState.data.hearts.toString() else ""
                     TopBarItem(
                         modifier = Modifier.clickable{
-                            if(uiState.data.hearts < 3){
+                            if(uiState is MenuUiState.Success && uiState.data.hearts < 3){
                                 scope.launch{
                                     showTimerPopup = true
                                     delay(5000)
@@ -171,7 +187,8 @@ fun MenuScreen(
 
         AnimatedVisibility(
             visible = uiState is MenuUiState.Success,
-            enter = slideInVertically( initialOffsetY = { it / 2} )
+            enter = slideInVertically(initialOffsetY = { it / 2}),
+            exit = slideOutVertically(targetOffsetY = { it / 2})
         ) {
             Column (
                 modifier = Modifier
@@ -190,7 +207,7 @@ fun MenuScreen(
                     ),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                val state = uiState as MenuUiState.Success
+                val state = if (uiState is MenuUiState.Success) uiState else return@TextButton
                 if(state.data.isFirstLaunch){
                     Text(
                         text = "Start",
@@ -276,20 +293,32 @@ fun MenuScreen(
                 onDismiss = load,
             )
         }
-    }
-}
 
-@Preview
-@Composable
-fun MenuScreenPreview(){
-    MenuScreen(
-        rememberNavController(),
-        MenuUiState.Success(
-            Player(isFirstLaunch = false, progress = 36),
-            maxId = 71,
-        ),
-        {}
-    )
+        if(showSettings){
+            SettingsDialog(
+                onDismiss = { showSettings = false },
+                resetProgressClick = { showResetProgressDialog = true },
+                viewSourceClick = {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse("https://www.github.com/andy-ife/Geobud")
+                    val title = "Check out the source code"
+                    val chooser = Intent.createChooser(intent, title)
+                    activity.startActivity(chooser)
+                }
+            )
+        }
+
+        if(showResetProgressDialog){
+            ResetProgressDialog(
+                message = "Are you sure you want to reset your progress? This will clear all game data.",
+                onDismiss = { showResetProgressDialog = false }
+            ) {
+                showSettings = false
+                showResetProgressDialog = false
+                resetProgress()
+            }
+        }
+    }
 }
 
 

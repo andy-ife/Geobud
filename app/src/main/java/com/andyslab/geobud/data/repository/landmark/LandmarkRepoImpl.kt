@@ -1,10 +1,12 @@
 package com.andyslab.geobud.data.repository.landmark
 
+import android.content.Context
 import android.util.Log
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.remote.LandmarkPhotoAPI
+import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
 import com.andyslab.geobud.data.repository.player.PlayerRepository
 import com.andyslab.geobud.utils.Resource
 import com.bumptech.glide.module.AppGlideModule
@@ -19,6 +21,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 class LandmarkRepoImpl @Inject constructor(
+    private val context: Context,
     private val db: LandmarkDatabase,
     private val api: LandmarkPhotoAPI,
     private val playerRepo: PlayerRepository
@@ -80,5 +83,13 @@ class LandmarkRepoImpl @Inject constructor(
 
     override suspend fun getMaxId(): Int {
         return withContext(Dispatchers.IO){ db.dao.getMaxId().first() }
+    }
+
+    override suspend fun resetProgress() {
+        withContext(Dispatchers.IO){
+            playerRepo.savePlayerData(Player()) //save a new Player with default params
+            PlayerRepoImpl.instance = null
+            //context.deleteDatabase("landmark.db")
+        }
     }
 }

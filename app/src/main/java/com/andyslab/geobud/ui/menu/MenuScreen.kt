@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -148,7 +147,7 @@ fun MenuScreen(
                         )
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.cog),
+                            painter = painterResource(R.drawable.settings_icon),
                             contentDescription = "settings"
                         )
                     }
@@ -217,9 +216,9 @@ fun MenuScreen(
                                 modifier = Modifier
                                     .height(16.dp)
                                     .width(160.dp)
-                                    .border(2.dp, Color.Black),
+                                    .border(1.dp, Color.Black, RoundedCornerShape(10.dp)),
                                 color = Color(0xFF37833A),
-                                strokeCap = StrokeCap.Square,
+                                strokeCap = StrokeCap.Round,
                                 gapSize = 0.dp,
                                 trackColor = Color(0xFF1B421C),
                                 drawStopIndicator = {}

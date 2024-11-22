@@ -1,22 +1,24 @@
 package com.andyslab.geobud.data.repository.landmark
 
+import android.content.ContentValues
 import android.content.Context
+import android.graphics.Bitmap
+import android.provider.MediaStore
 import android.util.Log
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
-import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.remote.LandmarkPhotoAPI
 import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
 import com.andyslab.geobud.data.repository.player.PlayerRepository
 import com.andyslab.geobud.utils.Resource
-import com.bumptech.glide.module.AppGlideModule
+import com.andyslab.geobud.utils.sdk29AndUp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.coroutineContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -25,7 +27,7 @@ class LandmarkRepoImpl @Inject constructor(
     private val db: LandmarkDatabase,
     private val api: LandmarkPhotoAPI,
     private val playerRepo: PlayerRepository
-) : LandmarkRepository, AppGlideModule() {
+) : LandmarkRepository{
 
     override suspend fun fetchLandmarkPhotos(limit: Int): Flow<Resource<Float>> {
         return flow {
@@ -90,6 +92,36 @@ class LandmarkRepoImpl @Inject constructor(
             playerRepo.savePlayerData(Player()) //save a new Player with default params
             PlayerRepoImpl.instance = null
             //context.deleteDatabase("landmark.db")
+        }
+    }
+
+    override suspend fun savePhotoToExternalStorage(
+        displayName: String,
+        bmp: Bitmap
+    ): Boolean {
+        val imageCollection = sdk29AndUp {
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } ?: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+
+        val contentValues = ContentValues().apply{
+            put(MediaStore.Images.Media.DISPLAY_NAME, "$displayName.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.WIDTH, bmp.width)
+            put(MediaStore.Images.Media.HEIGHT, bmp.height)
+        }
+
+        return try{
+            context.contentResolver.insert(imageCollection, contentValues)?.also{ uri ->
+                context.contentResolver.openOutputStream(uri)?.use{ outputStream ->
+                    if(!bmp.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)){
+                        throw IOException("Couldn't save photo.")
+                    }
+                }
+            }?: throw IOException("Couldn't access mediastore")
+            true
+        }catch(e: IOException){
+            Log.d("Error saving photo", e.message.toString())
+            false
         }
     }
 }

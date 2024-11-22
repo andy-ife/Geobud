@@ -52,15 +52,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.andyslab.geobud.R
-import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.ui.components.ErrorDialog
 import com.andyslab.geobud.ui.components.ResetProgressDialog
 import com.andyslab.geobud.ui.components.SettingsDialog

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.util.Log
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
+import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.remote.LandmarkPhotoAPI
 import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
@@ -99,29 +100,38 @@ class LandmarkRepoImpl @Inject constructor(
         displayName: String,
         bmp: Bitmap
     ): Boolean {
-        val imageCollection = sdk29AndUp {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        } ?: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        return withContext(Dispatchers.IO){
+            val imageCollection = sdk29AndUp {
+                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            } ?: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
-        val contentValues = ContentValues().apply{
-            put(MediaStore.Images.Media.DISPLAY_NAME, "$displayName.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.WIDTH, bmp.width)
-            put(MediaStore.Images.Media.HEIGHT, bmp.height)
+            val contentValues = ContentValues().apply{
+                put(MediaStore.Images.Media.DISPLAY_NAME, "$displayName.jpg")
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                put(MediaStore.Images.Media.WIDTH, bmp.width)
+                put(MediaStore.Images.Media.HEIGHT, bmp.height)
+            }
+
+            try{
+                context.contentResolver.insert(imageCollection, contentValues)?.also{ uri ->
+                    context.contentResolver.openOutputStream(uri)?.use{ outputStream ->
+                        if(!bmp.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)){
+                            throw IOException("Couldn't save photo.")
+                        }
+                    }
+                }?: throw IOException("Couldn't access mediastore")
+                true
+            }catch(e: IOException){
+                Log.d("Error saving photo", e.message.toString())
+                false
+            }
         }
 
-        return try{
-            context.contentResolver.insert(imageCollection, contentValues)?.also{ uri ->
-                context.contentResolver.openOutputStream(uri)?.use{ outputStream ->
-                    if(!bmp.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)){
-                        throw IOException("Couldn't save photo.")
-                    }
-                }
-            }?: throw IOException("Couldn't access mediastore")
-            true
-        }catch(e: IOException){
-            Log.d("Error saving photo", e.message.toString())
-            false
+    }
+
+    override suspend fun getLandmarkById(id: Int): Landmark {
+        return withContext(Dispatchers.IO){
+            db.dao.getLandmarkById(id).first()
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.andyslab.geobud.ui.quiz
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
@@ -9,6 +10,7 @@ import com.andyslab.geobud.domain.StartTimerUseCase
 import com.andyslab.geobud.utils.Resource
 import com.andyslab.geobud.utils.timeMillisToString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,23 +39,24 @@ class QuizViewModel @Inject constructor(
         }
 
     private lateinit var player: Player
+    private lateinit var lastPlayer: Player
 
     init{
         getPhoto()
         viewModelScope.launch{
             StartTimerUseCase.millisLeft.asSharedFlow().collect{ millisLeft ->
                 player.timeLeftTillNextHeart = millisLeft
-                if (_uiState.value.answerCorrect != true){
-                _uiState.update {
-                    it.copy(timeTillNextHeart = millisLeft.timeMillisToString())
-                }
-                if(millisLeft <= 0 && player.hearts < 3){
-                    player.hearts++
+                if (_uiState.value.answerCorrect != true && _uiState.value.savingPhoto == null){
                     _uiState.update {
-                        it.copy(player = player)
+                        it.copy(timeTillNextHeart = millisLeft.timeMillisToString())
+                    }
+                    if(millisLeft <= 0 && player.hearts < 3){
+                        player.hearts++
+                        _uiState.update {
+                            it.copy(player = player)
+                        }
                     }
                 }
-            }
             }
         }
     }
@@ -99,6 +102,7 @@ class QuizViewModel @Inject constructor(
                         }
                         is Resource.Success -> {
                             player = playerRepo.loadPlayerData().first().data!!
+                            lastPlayer = player.copy()
                             _uiState.update{
                                 it.copy(
                                     player = player,
@@ -112,6 +116,7 @@ class QuizViewModel @Inject constructor(
                     }
                 }
             }else{
+                lastPlayer = player.copy()
                 _uiState.update{
                     it.copy(
                         player = player,
@@ -157,6 +162,31 @@ class QuizViewModel @Inject constructor(
         ).random()
     }
 
+    fun savePhoto(displayName: String, bmp: Bitmap){
+        viewModelScope.launch{
+            _uiState.update {
+                it.copy(
+                    player = lastPlayer, //player might have already added progress, so I used a saved copy of player whose progress doesn't change.
+                    savingPhoto = "Saving photo",
+                )
+            }
+            val result = landmarkRepo.savePhotoToExternalStorage(displayName, bmp)
+            if(result){
+                _uiState.update {
+                    it.copy(savingPhoto = "Photo saved")
+                }
+            }else{
+                _uiState.update {
+                    it.copy(savingPhoto = "Could not save photo")
+                }
+            }
+            delay(2000) // give snackbars time to show
+            _uiState.update {
+                it.copy(savingPhoto = null)
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         player = player.copy(lastSessionTimestamp = System.currentTimeMillis())
@@ -171,6 +201,7 @@ data class QuizUiState(
     val player: Player? = null,
     val answerCorrect: Boolean? = null,
     val timeTillNextHeart: String? = "00:00",
+    val savingPhoto: String? = null,
     //concurrent
     val photoLoading: Boolean = true,
     val error: ErrorState? = null,

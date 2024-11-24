@@ -1,7 +1,11 @@
 package com.andyslab.geobud.ui.quiz
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -19,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,6 +34,8 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -56,9 +63,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
+import coil3.toBitmap
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -96,7 +108,8 @@ fun QuizScreen(
             uiState = uiState,
             getPhoto = viewModel::getPhoto,
             checkAnswer = viewModel::checkAnswer,
-            generateExclamation = viewModel::generateExclamation
+            generateExclamation = viewModel::generateExclamation,
+            savePhoto = viewModel::savePhoto
         )
     }
 }
@@ -114,6 +127,7 @@ fun QuizScreen(
     getPhoto: () -> Unit,
     checkAnswer: (String) -> Boolean,
     generateExclamation: () -> String,
+    savePhoto: (String, Bitmap) -> Unit,
     ){
     val landmark = uiState.player!!.currentLandmark!!
 
@@ -135,10 +149,24 @@ fun QuizScreen(
     val painterState by painter.state.collectAsStateWithLifecycle()
 
     val interactionSource = remember{ MutableInteractionSource() }
+    val snackbarHostState = remember{ SnackbarHostState() }
+
+    var lastPhotoUrl = remember{ landmark.photoUrl ?: "" }
+    var lastLandmarkName = remember { landmark.name }
 
     LaunchedEffect(uiState) {
+        if(uiState.savingPhoto != null){
+            snackbarHostState.showSnackbar(uiState.savingPhoto)
+            return@LaunchedEffect
+        }
+
         if(uiState.answerCorrect == true){
             sheetState.expand()
+        }
+
+        if(uiState.answerCorrect != true && landmark.photoUrl != lastPhotoUrl){
+            lastPhotoUrl = landmark.photoUrl ?: ""
+            lastLandmarkName = landmark.name
         }
     }
 
@@ -162,13 +190,27 @@ fun QuizScreen(
                 continueButtonClick = {
                     scope.launch{ sheetState.hide() }
                     getPhoto()
+                },
+                savePhotoBtnClick = {
+                    scope.launch{
+                        val loader = ImageLoader(activity)
+                        val req = ImageRequest.Builder(activity)
+                            .data(lastPhotoUrl)
+                            .allowHardware(false)
+                            .build()
+
+                        val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
+                        savePhoto(lastLandmarkName, bitmap)
+                    }
                 }
             )
                        },
             modifier = Modifier.fillMaxSize(),
             scaffoldState = scaffoldState,
             sheetPeekHeight = 0.dp,
-            sheetContainerColor = Color.White) {
+            sheetContainerColor = Color.White,
+            snackbarHost = {SnackbarHost(hostState = snackbarHostState, modifier = Modifier.offset(y = -40.dp))}
+            ) {
 
             Image(
                 painter = painter,
@@ -333,7 +375,20 @@ fun QuizScreen(
                     Icon(painter = painterResource(
                         id = R.drawable.outline_file_download_24),
                         contentDescription = "save photo",
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
+                            scope.launch{
+                                val loader = ImageLoader(activity)
+                                val req = ImageRequest.Builder(activity)
+                                    .data(lastPhotoUrl)
+                                    .allowHardware(false)
+                                    .build()
+
+                                val result = (loader.execute(req) as SuccessResult).image
+                                val bitmap = result.toBitmap()
+
+                                savePhoto(lastLandmarkName, bitmap)
+                            }
+                        },
                         tint = Color.White
                     )
                 }

@@ -176,7 +176,7 @@ fun CorrectAnswerBottomSheet(
 
             TextButton(onClick = { /*TODO*/ },
                 modifier = Modifier.fillMaxWidth(0.45f)
-                    .onClickWithScaleAnim(0.9f) { continueButtonClick() },
+                    .onClickWithScaleAnim(0.9f) { savePhotoBtnClick() },
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = Color(0xFF4CAF50),
                     contentColor = Color.White

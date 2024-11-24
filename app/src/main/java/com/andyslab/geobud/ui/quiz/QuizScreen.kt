@@ -2,6 +2,7 @@ package com.andyslab.geobud.ui.quiz
 import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.view.MotionEvent
@@ -41,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -174,6 +176,9 @@ fun QuizScreen(
         }
     }
 
+    val correctSoundEffectPlayer = remember { MediaPlayer.create(activity, R.raw.correct_sound_effect) }
+    val wrongSoundEffectPlayer = remember { MediaPlayer.create(activity, R.raw.wrong_sound_effect) }
+
     LaunchedEffect(uiState) {
         if(uiState.savingPhoto != null){
             snackbarHostState.showSnackbar(uiState.savingPhoto)
@@ -181,13 +186,23 @@ fun QuizScreen(
         }
 
         if(uiState.answerCorrect == true){
+            correctSoundEffectPlayer.start()
             exclamation = generateExclamation()
             sheetState.expand()
+        }else if(uiState.answerCorrect == false){
+            wrongSoundEffectPlayer.start()
         }
 
         if(uiState.answerCorrect != true && landmark.photoUrl != lastPhotoUrl){
             lastPhotoUrl = landmark.photoUrl ?: ""
             lastLandmarkName = landmark.name
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            correctSoundEffectPlayer.release()
+            wrongSoundEffectPlayer.release()
         }
     }
 

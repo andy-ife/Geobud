@@ -150,6 +150,10 @@ class QuizViewModel @Inject constructor(
                 }
                 viewModelScope.launch {
                     playerRepo.savePlayerData(player)
+                    delay(1000)
+                    _uiState.update {
+                        it.copy(answerCorrect = null)
+                    }
                 }
             }
         }

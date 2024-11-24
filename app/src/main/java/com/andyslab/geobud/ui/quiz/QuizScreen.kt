@@ -1,12 +1,13 @@
 package com.andyslab.geobud.ui.quiz
+import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -85,11 +86,19 @@ import com.andyslab.geobud.ui.components.TopBarItem
 import com.andyslab.geobud.ui.nav.Screen
 import com.andyslab.geobud.utils.clickableNoRipple
 import com.andyslab.geobud.utils.findActivity
+import com.andyslab.geobud.utils.hasWriteStoragePermissions
 import com.andyslab.geobud.utils.hideSystemUI
+import com.andyslab.geobud.utils.openAppSettings
 import com.andyslab.geobud.utils.shimmerLoadingEffect
 import com.andyslab.geobud.utils.showSystemUI
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+val permissions =
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    else
+        emptyArray()
 
 //Stateful
 @Composable
@@ -154,6 +163,16 @@ fun QuizScreen(
     var lastPhotoUrl = remember{ landmark.photoUrl ?: "" }
     var lastLandmarkName = remember { landmark.name }
 
+    var showPermissionDialog by remember{ mutableStateOf(false) }
+    val permsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permsMap ->
+        permsMap.forEach{
+            if(!it.value)
+                showPermissionDialog = true
+        }
+    }
+
     LaunchedEffect(uiState) {
         if(uiState.savingPhoto != null){
             snackbarHostState.showSnackbar(uiState.savingPhoto)
@@ -192,15 +211,20 @@ fun QuizScreen(
                     getPhoto()
                 },
                 savePhotoBtnClick = {
-                    scope.launch{
-                        val loader = ImageLoader(activity)
-                        val req = ImageRequest.Builder(activity)
-                            .data(lastPhotoUrl)
-                            .allowHardware(false)
-                            .build()
+                    if (!activity.hasWriteStoragePermissions()){
+                        permsLauncher.launch(permissions)
+                    }
+                    else{
+                        scope.launch{
+                            val loader = ImageLoader(activity)
+                            val req = ImageRequest.Builder(activity)
+                                .data(lastPhotoUrl)
+                                .allowHardware(false)
+                                .build()
 
-                        val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
-                        savePhoto(lastLandmarkName, bitmap)
+                            val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
+                            savePhoto(lastLandmarkName, bitmap)
+                        }
                     }
                 }
             )
@@ -376,17 +400,20 @@ fun QuizScreen(
                         id = R.drawable.outline_file_download_24),
                         contentDescription = "save photo",
                         modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
-                            scope.launch{
-                                val loader = ImageLoader(activity)
-                                val req = ImageRequest.Builder(activity)
-                                    .data(lastPhotoUrl)
-                                    .allowHardware(false)
-                                    .build()
+                            if (!activity.hasWriteStoragePermissions()){
+                                permsLauncher.launch(permissions)
+                            }
+                            else{
+                                scope.launch{
+                                    val loader = ImageLoader(activity)
+                                    val req = ImageRequest.Builder(activity)
+                                        .data(lastPhotoUrl)
+                                        .allowHardware(false)
+                                        .build()
 
-                                val result = (loader.execute(req) as SuccessResult).image
-                                val bitmap = result.toBitmap()
-
-                                savePhoto(lastLandmarkName, bitmap)
+                                    val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
+                                    savePhoto(lastLandmarkName, bitmap)
+                                }
                             }
                         },
                         tint = Color.White
@@ -444,6 +471,15 @@ fun QuizScreen(
             if(uiState.player.hearts == 0 && showOutOfHeartsPopup){
                 OutOfHeartsDialog(timer = uiState.timeTillNextHeart!!) {
                     showOutOfHeartsPopup = false
+                }
+            }
+
+            if(showPermissionDialog){
+                ErrorDialog(
+                    message = "Geobud can't save photos to your phone storage without storage permission. " +
+                        "Please go to app settings to grant it.") {
+                    showPermissionDialog = false
+                    activity.openAppSettings()
                 }
             }
 

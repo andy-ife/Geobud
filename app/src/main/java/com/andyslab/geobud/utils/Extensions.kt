@@ -1,7 +1,13 @@
 package com.andyslab.geobud.utils
 
+import android.Manifest
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.animateFloat
@@ -136,3 +142,19 @@ fun Context.findActivity(): ComponentActivity {
     }
     throw IllegalStateException("no activity")
 }
+
+fun Context.hasWriteStoragePermissions(): Boolean{
+    return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+        this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    else
+        true
+}
+
+fun Context.openAppSettings(){
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
+}
+
+

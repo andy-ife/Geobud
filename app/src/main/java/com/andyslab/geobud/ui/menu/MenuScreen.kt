@@ -76,7 +76,7 @@ fun MenuScreen(
     val context = LocalContext.current
     val activity = context.findActivity()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    MenuScreen(navController, activity, uiState, viewModel::resetProgress, viewModel::load)
+    MenuScreen(navController, activity, uiState, viewModel::toggleSound, viewModel::resetProgress, viewModel::load)
 }
 
 //Stateless
@@ -85,6 +85,7 @@ fun MenuScreen(
     navController: NavHostController,
     activity: ComponentActivity,
     uiState: MenuUiState,
+    toggleSound: () -> Unit,
     resetProgress: () -> Unit,
     load: () -> Unit,
     ) {
@@ -291,8 +292,9 @@ fun MenuScreen(
             )
         }
 
-        if(showSettings){
+        if(showSettings && uiState is MenuUiState.Success){
             SettingsDialog(
+                soundState = uiState.data.isSoundEnabled,
                 onDismiss = { showSettings = false },
                 resetProgressClick = { showResetProgressDialog = true },
                 viewSourceClick = {
@@ -301,7 +303,8 @@ fun MenuScreen(
                     val title = "Check out the source code"
                     val chooser = Intent.createChooser(intent, title)
                     activity.startActivity(chooser)
-                }
+                },
+                toggleSoundClick = toggleSound
             )
         }
 

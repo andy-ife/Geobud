@@ -7,5 +7,6 @@ data class Player(
     var hearts: Int = 3,
     var isFirstLaunch: Boolean = true,
     var lastSessionTimestamp: Long = 0L,
-    var timeLeftTillNextHeart: Long = 0L
+    var timeLeftTillNextHeart: Long = 0L,
+    var isSoundEnabled: Boolean = true,
 )

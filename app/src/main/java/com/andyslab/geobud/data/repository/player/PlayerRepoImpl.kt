@@ -32,6 +32,7 @@ class PlayerRepoImpl @Inject constructor(
     private val firstLaunchKey = booleanPreferencesKey("first_launch")
     private val timestampKey = longPreferencesKey("last_session_timestamp")
     private val timeLeftKey = longPreferencesKey("time_left_till_next_heart")
+    private val soundKey = booleanPreferencesKey("sound_enabled")
 
     companion object {
         var instance: Player? = null
@@ -47,6 +48,7 @@ class PlayerRepoImpl @Inject constructor(
                     val isFirstLaunch = prefs[firstLaunchKey] ?: true
                     val timestamp = prefs[timestampKey] ?: 0L
                     val timeLeft = prefs[timeLeftKey] ?: 0L
+                    val isSoundEnabled = prefs[soundKey] ?: true
 
                     val landmark = db.dao.getLandmarkById(progress).first()
 
@@ -58,6 +60,7 @@ class PlayerRepoImpl @Inject constructor(
                         isFirstLaunch = isFirstLaunch,
                         lastSessionTimestamp = timestamp,
                         timeLeftTillNextHeart = timeLeft,
+                        isSoundEnabled = isSoundEnabled
                     )
                 }catch(e: IOException){
                     emit(Resource.Error("Error loading player data"))
@@ -79,6 +82,7 @@ class PlayerRepoImpl @Inject constructor(
                     prefs[firstLaunchKey] = player.isFirstLaunch
                     prefs[timestampKey] = player.lastSessionTimestamp
                     prefs[timeLeftKey] = player.timeLeftTillNextHeart
+                    prefs[soundKey] = player.isSoundEnabled
                 }
             }catch(e: IOException){
                 Log.d("Datastore IO Exception", e.message.toString())

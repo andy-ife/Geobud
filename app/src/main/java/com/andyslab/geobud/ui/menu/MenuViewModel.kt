@@ -85,6 +85,13 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    fun toggleSound(){
+        GlobalScope.launch{
+            player.isSoundEnabled = !player.isSoundEnabled
+            playerRepo.savePlayerData(player)
+        }
+    }
+
     override fun onCleared() {
         player = player.copy(lastSessionTimestamp = System.currentTimeMillis())
         GlobalScope.launch{

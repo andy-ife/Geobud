@@ -186,11 +186,11 @@ fun QuizScreen(
         }
 
         if(uiState.answerCorrect == true){
-            correctSoundEffectPlayer.start()
+            if(uiState.player.isSoundEnabled) correctSoundEffectPlayer.start()
             exclamation = generateExclamation()
             sheetState.expand()
         }else if(uiState.answerCorrect == false){
-            wrongSoundEffectPlayer.start()
+            if(uiState.player.isSoundEnabled) wrongSoundEffectPlayer.start()
         }
 
         if(uiState.answerCorrect != true && landmark.photoUrl != lastPhotoUrl){

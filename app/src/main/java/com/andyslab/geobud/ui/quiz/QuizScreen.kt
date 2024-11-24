@@ -162,6 +162,7 @@ fun QuizScreen(
 
     var lastPhotoUrl = remember{ landmark.photoUrl ?: "" }
     var lastLandmarkName = remember { landmark.name }
+    var exclamation by remember{ mutableStateOf(generateExclamation()) }
 
     var showPermissionDialog by remember{ mutableStateOf(false) }
     val permsLauncher = rememberLauncherForActivityResult(
@@ -180,6 +181,7 @@ fun QuizScreen(
         }
 
         if(uiState.answerCorrect == true){
+            exclamation = generateExclamation()
             sheetState.expand()
         }
 
@@ -194,7 +196,7 @@ fun QuizScreen(
         BottomSheetScaffold(
         sheetContent = {
             CorrectAnswerBottomSheet(
-                exclamation = generateExclamation(),
+                exclamation = exclamation,
                 addedCoins = 20,
                 addedStars = 1,
                 landmark = landmark,

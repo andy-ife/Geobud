@@ -120,7 +120,8 @@ fun QuizScreen(
             getPhoto = viewModel::getPhoto,
             checkAnswer = viewModel::checkAnswer,
             generateExclamation = viewModel::generateExclamation,
-            savePhoto = viewModel::savePhoto
+            savePhoto = viewModel::savePhoto,
+            toggleSound = viewModel::toggleSound
         )
     }
 }
@@ -139,6 +140,7 @@ fun QuizScreen(
     checkAnswer: (String) -> Boolean,
     generateExclamation: () -> String,
     savePhoto: (String, Bitmap) -> Unit,
+    toggleSound: () -> Unit,
     ){
     val landmark = uiState.player!!.currentLandmark!!
 
@@ -407,37 +409,75 @@ fun QuizScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp),) {
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp),) {
 
-                    Icon(painter = painterResource(
-                        id = R.drawable.outline_file_download_24),
-                        contentDescription = "save photo",
-                        modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
-                            if (!activity.hasWriteStoragePermissions()){
-                                permsLauncher.launch(permissions)
-                            }
-                            else{
-                                scope.launch{
-                                    val loader = ImageLoader(activity)
-                                    val req = ImageRequest.Builder(activity)
-                                        .data(lastPhotoUrl)
-                                        .allowHardware(false)
-                                        .build()
-
-                                    val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
-                                    savePhoto(lastLandmarkName, bitmap)
+                        Icon(painter = painterResource(
+                            id = R.drawable.outline_file_download_24),
+                            contentDescription = "save photo",
+                            modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
+                                if (!activity.hasWriteStoragePermissions()){
+                                    permsLauncher.launch(permissions)
                                 }
-                            }
-                        },
-                        tint = Color.White
-                    )
-                }
+                                else{
+                                    scope.launch{
+                                        val loader = ImageLoader(activity)
+                                        val req = ImageRequest.Builder(activity)
+                                            .data(lastPhotoUrl)
+                                            .allowHardware(false)
+                                            .build()
+
+                                        val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
+                                        savePhoto(lastLandmarkName, bitmap)
+                                    }
+                                }
+                            },
+                            tint = Color.White
+                        )
+                    }
                 }
 
+                Spacer(modifier = Modifier.height(40.dp))
+
+                AnimatedVisibility(
+                    visible = textVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                    ){
+
+                    if(uiState.player.isSoundEnabled){
+                        Row(verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp),) {
+
+                            Icon(painter = painterResource(
+                                id = R.drawable.volume_icon),
+                                contentDescription = "toggle sound",
+                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){toggleSound()},
+                                tint = Color.White
+                            )
+                        }
+                    }else{
+                        Row(verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp),) {
+
+                            Icon(painter = painterResource(
+                                id = R.drawable.volume_off_icon),
+                                contentDescription = "toggle sound",
+                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){toggleSound()},
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
             }
 
 

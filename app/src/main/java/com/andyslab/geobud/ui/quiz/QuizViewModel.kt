@@ -191,6 +191,16 @@ class QuizViewModel @Inject constructor(
         }
     }
 
+    fun toggleSound(){
+        viewModelScope.launch{
+            player.isSoundEnabled = !player.isSoundEnabled
+            _uiState.update {
+                it.copy(player = player)
+            }
+            playerRepo.savePlayerData(player)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         player = player.copy(lastSessionTimestamp = System.currentTimeMillis())

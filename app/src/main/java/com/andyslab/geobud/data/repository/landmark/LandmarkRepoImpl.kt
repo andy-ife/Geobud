@@ -53,7 +53,11 @@ class LandmarkRepoImpl @Inject constructor(
                         )
                         if(response.isSuccessful && response.body() != null){
                             val photo = response.body()?.photos!!.let{ photos ->
-                                if(photos.size >= 4) photos.random() else photos.first()
+                                if(photos.size >= 4)
+                                    photos.filter{
+                                        it.alt.lowercase().contains(landmark.name.split(" ").first())
+                                    }.ifEmpty{ listOf(photos[0]) }.random() // this algo improves photo selection
+                                else photos.first()
                             }
 
                             landmark = landmark.copy(

@@ -11,6 +11,6 @@ interface LandmarkPhotoAPI {
     @GET("/v1/search")
     suspend fun getLandmarkPhoto(@Query("query")searchTerm: String,
                                  @Query("page")page: Int,
-                                 @Query("per_page")perPage: Int = 1): Response<LandmarkPhotoDto>
+                                 @Query("per_page")perPage: Int): Response<LandmarkPhotoDto>
 
 }

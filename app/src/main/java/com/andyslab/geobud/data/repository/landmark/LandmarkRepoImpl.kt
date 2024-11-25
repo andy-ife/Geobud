@@ -48,14 +48,18 @@ class LandmarkRepoImpl @Inject constructor(
                     try{
                         val response = api.getLandmarkPhoto(
                             searchTerm = landmark.name,
-                            page = Random.nextInt(1,4),
-                            perPage = 1,
+                            page = 1,
+                            perPage = 4,
                         )
                         if(response.isSuccessful && response.body() != null){
+                            val photo = response.body()?.photos!!.let{ photos ->
+                                if(photos.size >= 4) photos.random() else photos.first()
+                            }
+
                             landmark = landmark.copy(
-                                photoUrl = response.body()?.photos?.first()?.src?.portrait,
-                                photographer = response.body()?.photos?.first()?.photographer,
-                                photographerUrl = response.body()?.photos?.first()?.photographer_url
+                                photoUrl = photo.src.portrait,
+                                photographer = photo.photographer,
+                                photographerUrl = photo.photographer_url
                             )
                             db.dao.updateLandmark(landmark)
                         }

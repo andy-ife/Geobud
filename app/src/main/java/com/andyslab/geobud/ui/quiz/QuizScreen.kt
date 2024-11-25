@@ -178,6 +178,7 @@ fun QuizScreen(
         }
     }
 
+    var isSoundEnabled by remember { mutableStateOf(uiState.player.isSoundEnabled) }
     val correctSoundEffectPlayer = remember { MediaPlayer.create(activity, R.raw.correct_sound_effect) }
     val wrongSoundEffectPlayer = remember { MediaPlayer.create(activity, R.raw.wrong_sound_effect) }
 
@@ -448,7 +449,7 @@ fun QuizScreen(
                     exit = fadeOut()
                     ){
 
-                    if(uiState.player.isSoundEnabled){
+                    if(isSoundEnabled){
                         Row(verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End,
                             modifier = Modifier
@@ -458,7 +459,10 @@ fun QuizScreen(
                             Icon(painter = painterResource(
                                 id = R.drawable.volume_icon),
                                 contentDescription = "toggle sound",
-                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){toggleSound()},
+                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
+                                    toggleSound()
+                                    isSoundEnabled = false
+                                                                                                    },
                                 tint = Color.White
                             )
                         }
@@ -472,7 +476,10 @@ fun QuizScreen(
                             Icon(painter = painterResource(
                                 id = R.drawable.volume_off_icon),
                                 contentDescription = "toggle sound",
-                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){toggleSound()},
+                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
+                                    toggleSound()
+                                    isSoundEnabled = true
+                                                                                                    },
                                 tint = Color.White
                             )
                         }

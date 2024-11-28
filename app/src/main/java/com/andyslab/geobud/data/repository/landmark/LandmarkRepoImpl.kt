@@ -35,9 +35,6 @@ class LandmarkRepoImpl @Inject constructor(
             val player = playerRepo.loadPlayerData().first { it is Resource.Success }.data ?: return@flow
             val maxId = db.dao.getMaxId().first()
             for(i in player.progress.until(player.progress+limit)){
-                val p = (i.toFloat()/(player.progress+limit).toFloat()) + 0.05f
-                emit(Resource.Loading(p)) // loading progress
-
                 if(i > maxId) {
                     emit(Resource.Success())
                     return@flow
@@ -45,6 +42,9 @@ class LandmarkRepoImpl @Inject constructor(
 
                 var landmark = db.dao.getLandmarkById(i).first()
                 if(landmark.photoUrl == null){
+                    val p = (i.toFloat()/(player.progress+limit).toFloat()) + 0.05f
+                    emit(Resource.Loading(p)) // loading progress
+
                     try{
                         val response = api.getLandmarkPhoto(
                             searchTerm = landmark.name,

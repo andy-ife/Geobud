@@ -84,7 +84,7 @@ fun MenuScreen(
 fun MenuScreen(
     navController: NavHostController,
     activity: ComponentActivity,
-    uiState: MenuUiState,
+    uiState: MenuUiState?,
     toggleSound: () -> Unit,
     resetProgress: () -> Unit,
     load: () -> Unit,

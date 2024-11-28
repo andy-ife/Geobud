@@ -231,10 +231,10 @@ fun MenuScreen(
                                 modifier = Modifier
                                     .height(16.dp)
                                     .width(160.dp)
-                                    .border(1.dp, Color.Black, RoundedCornerShape(4.dp)),
+                                    .border(1.dp, Color.Black, RoundedCornerShape(10.dp)),
                                 color = Color(0xFF37833A),
-                                strokeCap = StrokeCap.Square,
-                                gapSize = 0.dp,
+                                strokeCap = StrokeCap.Round,
+                                gapSize = -300.dp,
                                 trackColor = Color(0xFF1B421C),
                                 drawStopIndicator = {}
                             )

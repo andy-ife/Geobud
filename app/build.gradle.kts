@@ -1,3 +1,5 @@
+android.buildFeatures.buildConfig = true
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,6 +24,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "PEXELS_API_KEY",
+            "\"${project.findProperty("PEXELS_API_KEY") ?: ""}\"")
     }
 
     buildTypes {

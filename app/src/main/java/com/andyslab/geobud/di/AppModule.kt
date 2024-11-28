@@ -95,7 +95,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFetchPhotosWorkerFactory(): FetchPhotosWorkerFactory{
-        return FetchPhotosWorkerFactory()
+    fun provideFetchPhotosWorkerFactory(repo: LandmarkRepository): FetchPhotosWorkerFactory{
+        return FetchPhotosWorkerFactory(repo)
     }
 }

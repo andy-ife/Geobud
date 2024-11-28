@@ -27,10 +27,10 @@ class GeobudApplication: Application(), Configuration.Provider {
             .build()
 }
 
-class FetchPhotosWorkerFactory: WorkerFactory() {
+class FetchPhotosWorkerFactory @Inject constructor(private val repo: LandmarkRepository): WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker = FetchPhotosWorker(appContext, workerParameters)
+    ): ListenableWorker = FetchPhotosWorker(appContext, workerParameters, repo)
 }

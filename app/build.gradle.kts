@@ -106,6 +106,7 @@ dependencies {
     //implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     ksp("androidx.hilt:hilt-compiler:1.2.0")
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.hilt:hilt-work:1.2.0")
 
     //Room
     implementation ("androidx.room:room-runtime:2.6.1")

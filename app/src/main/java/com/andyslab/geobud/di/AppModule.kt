@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.andyslab.geobud.FetchPhotosWorkerFactory
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.local.sources.CountriesDataSource
 import com.andyslab.geobud.data.remote.LandmarkPhotoAPI
@@ -90,5 +91,11 @@ class AppModule {
     @Singleton
     fun provideTimerUseCase(): StartTimerUseCase{
         return StartTimerUseCase()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFetchPhotosWorkerFactory(): FetchPhotosWorkerFactory{
+        return FetchPhotosWorkerFactory()
     }
 }

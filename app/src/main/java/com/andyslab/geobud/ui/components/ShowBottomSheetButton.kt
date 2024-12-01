@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,8 +34,8 @@ import com.andyslab.geobud.R
 fun ShowBottomSheetButton(modifier: Modifier, onClick: () -> Unit){
     val transition = rememberInfiniteTransition(label = "button color")
     val color by transition.animateColor(
-        initialValue = Color(0xFF53A0EA),
-        targetValue = Color(0xFF1976d2),
+        initialValue = MaterialTheme.colorScheme.surfaceTint,
+        targetValue = MaterialTheme.colorScheme.primary,
         animationSpec = infiniteRepeatable(
             animation = tween(1000),
             repeatMode = RepeatMode.Reverse
@@ -46,7 +47,7 @@ fun ShowBottomSheetButton(modifier: Modifier, onClick: () -> Unit){
         shape = CircleShape,
         colors = ButtonDefaults.textButtonColors(
             containerColor = color,
-            contentColor = Color.White
+            contentColor = MaterialTheme.colorScheme.onPrimary
         ),
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {

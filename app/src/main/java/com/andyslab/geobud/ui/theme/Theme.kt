@@ -1,18 +1,14 @@
 package com.andyslab.geobud.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
@@ -27,13 +23,14 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = Color.White,
     primaryContainer = Color.White,
     onPrimaryContainer = Color.Black,
+    inversePrimary = blue_primary_transparent,
 
     secondary = green_primary,
     onSecondary = Color.White,
     secondaryContainer = Color.White,
     onSecondaryContainer = Color.Black,
 
-    tertiary = purple_highlight,
+    tertiary = gray,
     tertiaryContainer = black_transparent1,
     onTertiaryContainer = Color.White,
 
@@ -42,15 +39,19 @@ private val LightColorScheme = lightColorScheme(
 
     surface = Color.White,
     onSurface = Color.Black,
+    surfaceTint = blue_primary_glow,
 
     surfaceVariant = green_primary_dark,
     onSurfaceVariant = green_primary_medium,
 
+    surfaceContainerLow = blue_extra_light,
+
     outline = Color.Black,
     outlineVariant = Color.Yellow,
 
-    scrim = black_transparent2
-    )
+    scrim = black_transparent2,
+    error = red_error
+)
 
 @Composable
 fun GeobudTheme(

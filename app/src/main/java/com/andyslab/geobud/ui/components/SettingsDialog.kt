@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -63,7 +64,7 @@ fun SettingsDialog(
             .wrapContentHeight(),
             shape = RoundedCornerShape(4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(5.dp)){
 
@@ -102,7 +103,7 @@ fun SettingsDialog(
                                 switchState = it
                                               },
                             colors = SwitchDefaults.colors(
-                                checkedTrackColor = Color(0xFF1976d2)
+                                checkedTrackColor = MaterialTheme.colorScheme.secondary
                             )
                             )
                     }

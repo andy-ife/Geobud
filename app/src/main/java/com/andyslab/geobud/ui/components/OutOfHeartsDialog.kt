@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,7 +48,7 @@ fun OutOfHeartsDialog(
             .wrapContentHeight(),
             shape = RoundedCornerShape(4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(5.dp),){
             Column(
@@ -71,7 +72,7 @@ fun OutOfHeartsDialog(
                     text = "More in:",
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     fontSize = 16.sp,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colorScheme.tertiary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
                 .wrapContentHeight(),
             shape = RoundedCornerShape(4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(5.dp),
 
@@ -48,7 +49,7 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
                 text = message,
                 fontSize = 17.sp,
                 fontFamily = FontFamily.SansSerif,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Start)
 
 
@@ -62,7 +63,7 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
                     onClick = { onDismiss() },
                     colors = ButtonDefaults.textButtonColors(
                     containerColor = Color.Transparent,
-                    contentColor = Color(0xFF7B1FA2),
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
                 //elevation = ButtonDefaults.buttonElevation(2.dp),
             ) {

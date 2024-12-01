@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -61,7 +62,7 @@ fun FetchingMorePhotosDialog(
                 .wrapContentHeight(),
             shape = RoundedCornerShape(4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(5.dp),
         ) {Column(
@@ -73,7 +74,7 @@ fun FetchingMorePhotosDialog(
                 text = "Just a second!",
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
 
@@ -83,9 +84,9 @@ fun FetchingMorePhotosDialog(
                 progress = { loadAnim },
                 modifier = Modifier
                     .height(12.dp)
-                    .border(2.dp, Color.Black, RectangleShape),
-                color = Color.Yellow,
-                trackColor = Color.Black,
+                    .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
+                color = MaterialTheme.colorScheme.outlineVariant,
+                trackColor = MaterialTheme.colorScheme.outline,
                 drawStopIndicator = {}
             )
 
@@ -94,7 +95,7 @@ fun FetchingMorePhotosDialog(
                 text = "Fetching more photos ...",
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
         }

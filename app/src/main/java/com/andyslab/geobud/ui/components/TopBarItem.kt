@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -51,18 +52,18 @@ fun TopBarItem(
 
         Text(modifier = Modifier
             .fillMaxWidth(0.7f)
-            .background(Color(0xB2000000), RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp))
             .align(Alignment.Center)
             .padding(2.dp),
             text = text,
             textAlign = TextAlign.Center,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
             fontSize = 15.sp,
             fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
             overflow = TextOverflow.Clip
         )
 
-        Button3d(icon = R.drawable.plus,)
+        Button3d()
 
         Image(modifier = Modifier
             .size(28.dp)
@@ -78,7 +79,7 @@ fun TopBarItem(
 }
 
 @Composable
-fun Button3d(@DrawableRes icon: Int){
+fun Button3d() {
     Row(horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxSize()

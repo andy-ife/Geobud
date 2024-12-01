@@ -35,6 +35,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -252,7 +253,7 @@ fun QuizScreen(
             modifier = Modifier.fillMaxSize(),
             scaffoldState = scaffoldState,
             sheetPeekHeight = 0.dp,
-            sheetContainerColor = Color.White,
+            sheetContainerColor = MaterialTheme.colorScheme.surface,
             snackbarHost = {SnackbarHost(hostState = snackbarHostState, modifier = Modifier.offset(y = -40.dp))}
             ) {
 
@@ -302,9 +303,9 @@ fun QuizScreen(
                     .background(
                         Brush.verticalGradient(
                             listOf(
-                                Color(0x19000000),
+                                MaterialTheme.colorScheme.scrim,
                                 Color.Transparent,
-                                Color(0xB2000000)
+                                MaterialTheme.colorScheme.tertiaryContainer
                             ),
                         )
                     ))
@@ -360,12 +361,12 @@ fun QuizScreen(
                                         }
                                     }
                                 },
-                            tint = Color.White)
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer)
 
                         Text(text = "Guess the Country - ${landmark.id + 1}",
                             fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
                         )
 
                         Spacer(modifier = Modifier.width(50.dp))
@@ -393,11 +394,11 @@ fun QuizScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp),) {
                         Box(modifier = Modifier
-                            .background(Color(0xB2000000), RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp))
                             .padding(8.dp)) {
                             Text(
                                 text = "More in ${uiState.timeTillNextHeart ?: "00 : 00"}",
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
                                 fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                             )
                         }
@@ -436,7 +437,7 @@ fun QuizScreen(
                                     }
                                 }
                             },
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
                 }
@@ -463,7 +464,7 @@ fun QuizScreen(
                                     toggleSound()
                                     isSoundEnabled = false
                                                                                                     },
-                                tint = Color.White
+                                tint = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
                     }else{
@@ -480,7 +481,7 @@ fun QuizScreen(
                                     toggleSound()
                                     isSoundEnabled = true
                                                                                                     },
-                                tint = Color.White
+                                tint = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
                     }

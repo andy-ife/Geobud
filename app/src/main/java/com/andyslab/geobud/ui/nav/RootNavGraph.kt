@@ -1,12 +1,13 @@
 package com.andyslab.geobud.ui.nav
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.andyslab.geobud.ui.quiz.QuizScreen
 import com.andyslab.geobud.ui.menu.MenuScreen
+import com.andyslab.geobud.ui.quiz.QuizScreen
 
 @Composable
 fun RootNavGraph() {
@@ -16,7 +17,12 @@ fun RootNavGraph() {
         composable(route = Screen.LoadingScreen.route){
             MenuScreen(navController)
         }
-        composable(route = Screen.LandmarksQuizScreen.route){
+        composable(
+            route = Screen.LandmarksQuizScreen.route,
+            enterTransition = {slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start)},
+            exitTransition = {slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)},
+            popExitTransition = {slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)}
+        ){
             QuizScreen(navController)
         }
     }

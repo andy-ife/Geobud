@@ -34,6 +34,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -133,10 +134,10 @@ fun MenuScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp, vertical = 100.dp),) {
-                Box(modifier = Modifier.background(Color(0xB2000000), RoundedCornerShape(8.dp)).padding(8.dp)) {
+                Box(modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp)).padding(8.dp)) {
                     Text(
                         text = "More in ${uiState.timeTillNextHeart}",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
                         fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                     )
                 }
@@ -201,7 +202,7 @@ fun MenuScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4CAF50),
+                    containerColor = MaterialTheme.colorScheme.secondary,
                     ),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
@@ -231,11 +232,11 @@ fun MenuScreen(
                                 modifier = Modifier
                                     .height(16.dp)
                                     .width(160.dp)
-                                    .border(1.dp, Color.Black, RoundedCornerShape(10.dp)),
-                                color = Color(0xFF37833A),
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp)),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 strokeCap = StrokeCap.Round,
                                 gapSize = -300.dp,
-                                trackColor = Color(0xFF1B421C),
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 drawStopIndicator = {}
                             )
                             Text(
@@ -267,9 +268,9 @@ fun MenuScreen(
                     progress = { loadAnim },
                     modifier = Modifier
                         .height(12.dp)
-                        .border(2.dp, Color.Black, RectangleShape),
-                    color = Color.Yellow,
-                    trackColor = Color.Black,
+                        .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    trackColor = MaterialTheme.colorScheme.tertiaryContainer,
                     drawStopIndicator = {}
                 )
 
@@ -279,7 +280,7 @@ fun MenuScreen(
                     text = "Loading...",
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }}
 

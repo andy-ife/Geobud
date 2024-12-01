@@ -12,6 +12,7 @@ import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.andyslab.geobud.ui.nav.RootNavGraph
+import com.andyslab.geobud.ui.theme.GeobudTheme
 import com.andyslab.geobud.work.FetchPhotosWorker
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Duration
@@ -42,7 +43,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         viewModel.startTimer()
         setContent {
-            RootNavGraph()
+            GeobudTheme { RootNavGraph() }
         }
     }
 

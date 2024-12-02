@@ -18,6 +18,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -47,10 +49,14 @@ fun SettingsDialog(
     resetProgressClick: () -> Unit = {},
     checkForUpdatesClick: () -> Unit = {},
     viewSourceClick: () -> Unit = {},
-    toggleSoundClick: () -> Unit = {}
+    toggleSoundClick: () -> Unit = {},
+    shouldForceDarkMode: Boolean? = null,
+    toggleTheme: (Boolean?) -> Unit = {},
 ){
     val interactionSource = remember { MutableInteractionSource() }
     var switchState by remember{ mutableStateOf(soundState)}
+    var radioBtnState by remember{ mutableStateOf(shouldForceDarkMode) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -76,6 +82,14 @@ fun SettingsDialog(
                 )
                 
                 Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = stringResource(R.string.general),
+                    fontSize = 12.sp,
+                    color= MaterialTheme.colorScheme.tertiary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Row (
                     modifier = Modifier.fillMaxWidth().clickableNoRipple(interactionSource){
@@ -130,7 +144,7 @@ fun SettingsDialog(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 HorizontalDivider(color = Color.LightGray)
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -150,7 +164,7 @@ fun SettingsDialog(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 HorizontalDivider(color = Color.LightGray)
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -170,8 +184,131 @@ fun SettingsDialog(
                         text = stringResource(R.string.source_code)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(40.dp))
+
+                Text(
+                    text = stringResource(R.string.theme),
+                    fontSize = 12.sp,
+                    color= MaterialTheme.colorScheme.tertiary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row (
+                    modifier = Modifier.fillMaxWidth().clickableNoRipple(interactionSource){
+                        toggleTheme(true)
+                        radioBtnState = true
+                    },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Icon(
+                        painter = painterResource(R.drawable.dark_mode_icon),
+                        contentDescription = null,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.dark)
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ){
+                        RadioButton(
+                            selected = radioBtnState == true,
+                            onClick = {
+                                toggleTheme(true)
+                                radioBtnState = true
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.secondary
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+                HorizontalDivider(color = Color.LightGray)
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row (
+                    modifier = Modifier.fillMaxWidth().clickableNoRipple(interactionSource){
+                        toggleTheme(false)
+                        radioBtnState = false
+                    },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Icon(
+                        painter = painterResource(R.drawable.light_mode_icon),
+                        contentDescription = null,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.light)
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ){
+                        RadioButton(
+                            selected = radioBtnState == false,
+                            onClick = {
+                                toggleTheme(false)
+                                radioBtnState = false
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.secondary
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+                HorizontalDivider(color = Color.LightGray)
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row (
+                    modifier = Modifier.fillMaxWidth().clickableNoRipple(interactionSource){
+                        toggleTheme(null)
+                        radioBtnState = null
+                    },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Icon(
+                        painter = painterResource(R.drawable.system_default_icon),
+                        contentDescription = null,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.use_sys_default)
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ){
+                        RadioButton(
+                            selected = radioBtnState == null,
+                            onClick = {
+                                toggleTheme(null)
+                                radioBtnState = null
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.secondary
+                            )
+                        )
+                    }
+                }
             }
 
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingsDialogPrev(){
+    SettingsDialog(onDismiss = {})
 }

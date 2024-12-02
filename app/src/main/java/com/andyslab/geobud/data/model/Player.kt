@@ -9,4 +9,5 @@ data class Player(
     var lastSessionTimestamp: Long = 0L,
     var timeLeftTillNextHeart: Long = 0L,
     var isSoundEnabled: Boolean = true,
+    var forceDarkMode: Boolean? = null,
 )

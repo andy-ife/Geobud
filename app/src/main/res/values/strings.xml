@@ -31,4 +31,9 @@
     <string name="check_updates">Check for updates</string>
     <string name="source_code">Source code</string>
     <string name="top_bar_icon">Top bar item icon</string>
+    <string name="general">General</string>
+    <string name="theme">Theme</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+    <string name="use_sys_default">Use system default</string>
 </resources>

@@ -13,9 +13,35 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    /*primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80*/
+    primary = blue_primary,
+    onPrimary = Color.White,
+    inversePrimary = blue_primary_transparent,
+
+    secondary = green_primary,
+    onSecondary = Color.White,
+
+    tertiary = gray,
+    tertiaryContainer = black_transparent1,
+    onTertiaryContainer = Color.White,
+
+    background = gray_background,
+    onBackground = Color.White,
+
+    surface = gray_background,
+    onSurface = Color.White,
+    surfaceTint = blue_primary_glow,
+
+    surfaceVariant = green_primary_dark,
+    onSurfaceVariant = green_primary_medium,
+    inverseOnSurface = green_dark,
+
+    surfaceContainerLow = blue_extra_dark,
+
+    outline = Color.DarkGray,
+    outlineVariant = Color.Yellow,
+
+    scrim = black_transparent2,
+    error = red_error
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -43,6 +69,7 @@ private val LightColorScheme = lightColorScheme(
 
     surfaceVariant = green_primary_dark,
     onSurfaceVariant = green_primary_medium,
+    inverseOnSurface = green_primary_medium,
 
     surfaceContainerLow = blue_extra_light,
 
@@ -56,16 +83,18 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun GeobudTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    forceDarkTheme: Boolean = false,
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+
     val colorScheme = when {
 //        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
-
+        forceDarkTheme -> DarkColorScheme
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

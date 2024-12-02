@@ -70,7 +70,7 @@ fun CorrectAnswerBottomSheet(
             Text(text = exclamation,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,)
+                color = MaterialTheme.colorScheme.inverseOnSurface,)
 
             Spacer(modifier = Modifier.width(30.dp))
 
@@ -81,7 +81,7 @@ fun CorrectAnswerBottomSheet(
             Text(text = addedStars.toString(),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                color = MaterialTheme.colorScheme.inverseOnSurface)
 
             Spacer(modifier = Modifier.width(30.dp))
 
@@ -92,7 +92,7 @@ fun CorrectAnswerBottomSheet(
             Text(text = addedCoins.toString(),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                color = MaterialTheme.colorScheme.inverseOnSurface)
         }
 
         Spacer(modifier = Modifier.height(16.dp))

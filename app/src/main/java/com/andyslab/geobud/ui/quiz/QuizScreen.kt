@@ -59,6 +59,7 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -219,11 +220,11 @@ fun QuizScreen(
                 addedCoins = 20,
                 addedStars = 1,
                 landmark = landmark,
-                photographer = "Photo by ${landmark.photographer}",
+                photographer = "${stringResource(R.string.photo_by)} ${landmark.photographer}",
                 photographerUrlClick = {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(landmark.photographerUrl)
-                    val title = "Go to photographer's page"
+                    val title = activity.getText(R.string.go_to_photographer)
                     val chooser = Intent.createChooser(intent, title)
                     activity.startActivity(chooser)
                 },
@@ -259,7 +260,7 @@ fun QuizScreen(
 
             Image(
                 painter = painter,
-                contentDescription = "landmark photo",
+                contentDescription = stringResource(R.string.landmark_photo),
                 modifier = Modifier
                     .fillMaxSize()
                     .pointerInteropFilter {
@@ -319,15 +320,17 @@ fun QuizScreen(
                 horizontalAlignment = Alignment.End
                 ){
                 AsyncImage(
-                    model = "https://images.pexels.com/lib/api/pexels-white.png",
+                    model = "https://images.pexels.com/lib/api/pexels-white.png", // change logo for dark mode
                     contentDescription = null,
-                    modifier = Modifier.size(60.dp).clickableNoRipple(interactionSource){
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.data = Uri.parse("https://www.pexels.com")
-                        val title = "Go to pexels.com"
-                        val chooser = Intent.createChooser(intent, title)
-                        activity.startActivity(chooser)
-                    }
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clickableNoRipple(interactionSource) {
+                            val intent = Intent(Intent.ACTION_VIEW)
+                            intent.data = Uri.parse("https://www.pexels.com")
+                            val title = activity.getText(R.string.go_to_pexels)
+                            val chooser = Intent.createChooser(intent, title)
+                            activity.startActivity(chooser)
+                        }
                 )
             }
 
@@ -351,7 +354,7 @@ fun QuizScreen(
                     ){
 
                         Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "back",
+                            contentDescription = stringResource(R.string.back),
                             modifier = Modifier
                                 .size(40.dp)
                                 .clickable {
@@ -363,7 +366,8 @@ fun QuizScreen(
                                 },
                             tint = MaterialTheme.colorScheme.onTertiaryContainer)
 
-                        Text(text = "Guess the Country - ${landmark.id + 1}",
+                        Text(
+                            text = "${stringResource(R.string.guess_the_country)} - ${landmark.id + 1}",
                             fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -394,10 +398,13 @@ fun QuizScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 14.dp),) {
                         Box(modifier = Modifier
-                            .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp))
+                            .background(
+                                MaterialTheme.colorScheme.tertiaryContainer,
+                                RoundedCornerShape(8.dp)
+                            )
                             .padding(8.dp)) {
                             Text(
-                                text = "More in ${uiState.timeTillNextHeart ?: "00 : 00"}",
+                                text = "${stringResource(R.string.more_in)} ${uiState.timeTillNextHeart ?: "00 : 00"}",
                                 color = MaterialTheme.colorScheme.onTertiaryContainer,
                                 fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                             )
@@ -419,24 +426,27 @@ fun QuizScreen(
 
                         Icon(painter = painterResource(
                             id = R.drawable.outline_file_download_24),
-                            contentDescription = "save photo",
-                            modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
-                                if (!activity.hasWriteStoragePermissions()){
-                                    permsLauncher.launch(permissions)
-                                }
-                                else{
-                                    scope.launch{
-                                        val loader = ImageLoader(activity)
-                                        val req = ImageRequest.Builder(activity)
-                                            .data(lastPhotoUrl)
-                                            .allowHardware(false)
-                                            .build()
+                            contentDescription = stringResource(R.string.save_photo),
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickableNoRipple(interactionSource) {
+                                    if (!activity.hasWriteStoragePermissions()) {
+                                        permsLauncher.launch(permissions)
+                                    } else {
+                                        scope.launch {
+                                            val loader = ImageLoader(activity)
+                                            val req = ImageRequest
+                                                .Builder(activity)
+                                                .data(lastPhotoUrl)
+                                                .allowHardware(false)
+                                                .build()
 
-                                        val bitmap = (loader.execute(req) as SuccessResult).image.toBitmap()
-                                        savePhoto(lastLandmarkName, bitmap)
+                                            val bitmap =
+                                                (loader.execute(req) as SuccessResult).image.toBitmap()
+                                            savePhoto(lastLandmarkName, bitmap)
+                                        }
                                     }
-                                }
-                            },
+                                },
                             tint = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
@@ -459,11 +469,13 @@ fun QuizScreen(
 
                             Icon(painter = painterResource(
                                 id = R.drawable.volume_icon),
-                                contentDescription = "toggle sound",
-                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
-                                    toggleSound()
-                                    isSoundEnabled = false
-                                                                                                    },
+                                contentDescription = stringResource(R.string.toggle_sound),
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clickableNoRipple(interactionSource) {
+                                        toggleSound()
+                                        isSoundEnabled = false
+                                    },
                                 tint = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
@@ -476,11 +488,13 @@ fun QuizScreen(
 
                             Icon(painter = painterResource(
                                 id = R.drawable.volume_off_icon),
-                                contentDescription = "toggle sound",
-                                modifier = Modifier.size(30.dp).clickableNoRipple(interactionSource){
-                                    toggleSound()
-                                    isSoundEnabled = true
-                                                                                                    },
+                                contentDescription = stringResource(R.string.toggle_sound),
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clickableNoRipple(interactionSource) {
+                                        toggleSound()
+                                        isSoundEnabled = true
+                                    },
                                 tint = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
@@ -513,7 +527,7 @@ fun QuizScreen(
                 if(uiState.player.hearts == 0) showOutOfHeartsPopup = true
                 checkAnswer(it)
             }
-            QuizOptionButton(text = options.elementAtOrElse(3) { "Nigeria" },){
+            QuizOptionButton(text = options.elementAtOrElse(3) { activity.getText(R.string.Nigeria).toString() },){
                 if(uiState.player.hearts == 0) showOutOfHeartsPopup = true
                 checkAnswer(it)
             }
@@ -527,7 +541,7 @@ fun QuizScreen(
             }
 
             if((uiState.error != null || painterState is AsyncImagePainter.State.Error)){
-                ErrorDialog(message = uiState.error?.message?:"We couldn't load the photo. Please check your internet connection.") {
+                ErrorDialog(message = uiState.error?.message?: stringResource(R.string.error_load_photo)) {
                     getPhoto()
                     painter.restart()
                 }
@@ -541,8 +555,8 @@ fun QuizScreen(
 
             if(showPermissionDialog){
                 ErrorDialog(
-                    message = "Geobud can't save photos to your phone storage without storage permission. " +
-                        "Please go to app settings to grant it.") {
+                    message = stringResource(R.string.error_storage_permission)
+                ) {
                     showPermissionDialog = false
                     activity.openAppSettings()
                 }
@@ -571,11 +585,4 @@ fun QuizScreen(
             LottieAnimation(composition = lottie)
         }
     }
-}
-
-
-@Composable
-@Preview
-fun QuizScreenPrev(){
-
 }

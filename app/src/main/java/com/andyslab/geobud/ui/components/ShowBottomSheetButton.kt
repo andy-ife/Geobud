@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -52,7 +53,7 @@ fun ShowBottomSheetButton(modifier: Modifier, onClick: () -> Unit){
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {
         Text(
-            text = "Continue",
+            text = stringResource(R.string.continue_),
             fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
             fontSize = 16.sp
         )

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -179,13 +180,13 @@ fun CorrectAnswerBottomSheet(
                 elevation = ButtonDefaults.buttonElevation(2.dp),
                 contentPadding = PaddingValues(horizontal = 24.dp)
             ) {
-                Text(text = "Save photo",
+                Text(text = stringResource(R.string.save_photo),
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     fontSize = 14.sp)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(painter = painterResource(
                     id = R.drawable.outline_file_download_24),
-                    contentDescription = "save photo",
+                    contentDescription = stringResource(R.string.save_photo),
                     modifier = Modifier.size(22.dp),
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
@@ -201,23 +202,11 @@ fun CorrectAnswerBottomSheet(
                 elevation = ButtonDefaults.buttonElevation(2.dp),
                 contentPadding = PaddingValues(horizontal = 24.dp)
             ) {
-               Text(text = "Continue",
+               Text(text = stringResource(R.string.continue_),
                    fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                    fontSize = 14.sp)
             }
 
         }
     }
-}
-
-@Preview
-@Composable
-fun BottomSheetPreview(){
-    CorrectAnswerBottomSheet(
-        photographer = "Photo by John Doe",
-        exclamation = "Nice!",
-        addedCoins = 20,
-        addedStars = 1,
-        landmark = Landmark(0,"Streets of Flame","England", "EU", "Hogwarts", "Lorem ipsum delerat sancti poltis du fonti dafdfda", "", "", "" )
-    )
 }

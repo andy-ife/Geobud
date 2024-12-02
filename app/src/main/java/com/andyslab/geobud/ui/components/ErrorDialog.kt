@@ -15,6 +15,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.andyslab.geobud.R
 
 @Composable
 fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> Unit){
@@ -68,18 +70,11 @@ fun ErrorDialog(modifier:Modifier = Modifier, message: String, onDismiss: () -> 
                 //elevation = ButtonDefaults.buttonElevation(2.dp),
             ) {
 
-                Text(text = "Retry",
+                Text(text = stringResource(R.string.retry),
                     fontSize = 16.sp)
             }
             }
 
         }
     }
-}
-
-
-@Composable
-@Preview
-fun ErrorDialogPreview(){
-    ErrorDialog(modifier = Modifier, "Connection error. Please check your internet connection"){}
 }

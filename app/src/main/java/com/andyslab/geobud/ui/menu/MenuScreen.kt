@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -121,7 +122,7 @@ fun MenuScreen(
 
         Image(
             painter = painterResource(id = R.drawable.geobud_logo),
-            contentDescription = "app logo",
+            contentDescription = stringResource(R.string.app_logo_desc),
             modifier = Modifier
                 .size(200.dp)
                 .offset(y = -80.dp)
@@ -134,9 +135,14 @@ fun MenuScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp, vertical = 100.dp),) {
-                Box(modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp)).padding(8.dp)) {
+                Box(modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.tertiaryContainer,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)) {
                     Text(
-                        text = "More in ${uiState.timeTillNextHeart}",
+                        text = "${stringResource(R.string.more_in)} ${uiState.timeTillNextHeart}",
                         color = MaterialTheme.colorScheme.onTertiaryContainer,
                         fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                     )
@@ -163,7 +169,7 @@ fun MenuScreen(
                     ) {
                         Image(
                             painter = painterResource(R.drawable.settings_icon),
-                            contentDescription = "settings"
+                            contentDescription = stringResource(R.string.settings)
                         )
                     }
 
@@ -209,7 +215,7 @@ fun MenuScreen(
                 val state = if (uiState is MenuUiState.Success) uiState else return@TextButton
                 if(state.data.isFirstLaunch){
                     Text(
-                        text = "Start",
+                        text = stringResource(R.string.start),
                         fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
                         fontSize = 20.sp
                     )
@@ -219,7 +225,7 @@ fun MenuScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ){
                         Text(
-                            text = "Continue",
+                            text = stringResource(R.string.continue_),
                             fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
                             fontSize = 20.sp
                         )
@@ -232,7 +238,11 @@ fun MenuScreen(
                                 modifier = Modifier
                                     .height(16.dp)
                                     .width(160.dp)
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(10.dp)),
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.outline,
+                                        RoundedCornerShape(10.dp)
+                                    ),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 strokeCap = StrokeCap.Round,
                                 gapSize = -300.dp,
@@ -277,7 +287,7 @@ fun MenuScreen(
                 Spacer(modifier = Modifier.size(10.dp))
 
                 Text(
-                    text = "Loading...",
+                    text = "${stringResource(R.string.loading)}...",
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground
@@ -301,7 +311,7 @@ fun MenuScreen(
                 viewSourceClick = {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse("https://www.github.com/andy-ife/Geobud")
-                    val title = "Check out the source code"
+                    val title = activity.getText(R.string.check_source)
                     val chooser = Intent.createChooser(intent, title)
                     activity.startActivity(chooser)
                 },
@@ -311,7 +321,7 @@ fun MenuScreen(
 
         if(showResetProgressDialog){
             ResetProgressDialog(
-                message = "Are you sure you want to reset your progress? This will clear all game data.",
+                message = stringResource(R.string.confirm_reset_data),
                 onDismiss = { showResetProgressDialog = false }
             ) {
                 showSettings = false

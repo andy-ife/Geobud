@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,7 +71,7 @@ fun SettingsDialog(
 
             Column(modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)) {
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.settings),
                     fontSize = 16.sp,
                 )
                 
@@ -89,7 +90,7 @@ fun SettingsDialog(
                     )
 
                     Text(
-                        text = "Sound"
+                        text = stringResource(R.string.sound)
                     )
 
                     Row(
@@ -125,7 +126,7 @@ fun SettingsDialog(
                     )
 
                     Text(
-                        text = "Reset progress"
+                        text = stringResource(R.string.reset_progress)
                     )
                 }
 
@@ -145,7 +146,7 @@ fun SettingsDialog(
                     )
 
                     Text(
-                        text = "Check for updates"
+                        text = stringResource(R.string.check_updates)
                     )
                 }
 
@@ -166,17 +167,11 @@ fun SettingsDialog(
                     )
 
                     Text(
-                        text = "Source code"
+                        text = stringResource(R.string.source_code)
                     )
                 }
             }
 
         }
     }
-}
-
-@Preview
-@Composable
-fun SettingsDialogPrev(){
-    SettingsDialog(onDismiss = {})
 }

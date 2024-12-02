@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -70,8 +71,10 @@ fun FetchingMorePhotosDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
         ){
             Text(
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                text = "Just a second!",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                text = stringResource(R.string.just_a_second),
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                 color = MaterialTheme.colorScheme.onSurface,
@@ -91,8 +94,10 @@ fun FetchingMorePhotosDialog(
             )
 
             Text(
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                text = "Fetching more photos ...",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                text = "${stringResource(R.string.fetching_more_photos)} ...",
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                 color = MaterialTheme.colorScheme.onSurface,

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -43,9 +44,9 @@ fun OutOfHeartsDialog(
     ) {
         Card (
             modifier = modifier
-            .padding(10.dp)
-            .fillMaxWidth()
-            .wrapContentHeight(),
+                .padding(10.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
             shape = RoundedCornerShape(4.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
@@ -53,23 +54,25 @@ fun OutOfHeartsDialog(
             elevation = CardDefaults.cardElevation(5.dp),){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().padding(10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
             ) {
                 Image(
                 painter = painterResource(R.drawable.heart),
-                contentDescription = "out of hearts",
+                contentDescription = stringResource(R.string.out_of_hearts),
                 modifier = Modifier.size(28.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Oh dear, you seem to be out of hearts :(",
+                    text = stringResource(R.string.oh_dear_no_hearts),
                     textAlign = TextAlign.Center,
                     fontSize=18.sp,
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans))
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "More in:",
+                    text = "${stringResource(R.string.more_in)}:",
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.tertiary
@@ -84,10 +87,4 @@ fun OutOfHeartsDialog(
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun OutOfHeartsDialogPrev(){
-    OutOfHeartsDialog(timer="00 : 30") { }
 }

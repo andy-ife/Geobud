@@ -33,6 +33,7 @@ class PlayerRepoImpl @Inject constructor(
     private val timestampKey = longPreferencesKey("last_session_timestamp")
     private val timeLeftKey = longPreferencesKey("time_left_till_next_heart")
     private val soundKey = booleanPreferencesKey("sound_enabled")
+    private val forceDarkModeKey = booleanPreferencesKey("force_dark_mode")
 
     companion object {
         var instance: Player? = null
@@ -49,6 +50,7 @@ class PlayerRepoImpl @Inject constructor(
                     val timestamp = prefs[timestampKey] ?: 0L
                     val timeLeft = prefs[timeLeftKey] ?: 0L
                     val isSoundEnabled = prefs[soundKey] ?: true
+                    val forceDarkMode = prefs[forceDarkModeKey]
 
                     val landmark = db.dao.getLandmarkById(progress).first()
 
@@ -60,7 +62,8 @@ class PlayerRepoImpl @Inject constructor(
                         isFirstLaunch = isFirstLaunch,
                         lastSessionTimestamp = timestamp,
                         timeLeftTillNextHeart = timeLeft,
-                        isSoundEnabled = isSoundEnabled
+                        isSoundEnabled = isSoundEnabled,
+                        forceDarkMode = forceDarkMode
                     )
                 }catch(e: IOException){
                     emit(Resource.Error("Error loading player data"))
@@ -83,6 +86,12 @@ class PlayerRepoImpl @Inject constructor(
                     prefs[timestampKey] = player.lastSessionTimestamp
                     prefs[timeLeftKey] = player.timeLeftTillNextHeart
                     prefs[soundKey] = player.isSoundEnabled
+
+                    if(player.forceDarkMode != null){
+                        prefs[forceDarkModeKey] = player.forceDarkMode!!
+                    }else{
+                        prefs.remove(forceDarkModeKey)
+                    }
                 }
             }catch(e: IOException){
                 Log.d("Datastore IO Exception", e.message.toString())

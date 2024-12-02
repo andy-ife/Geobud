@@ -10,12 +10,12 @@ import com.andyslab.geobud.ui.menu.MenuScreen
 import com.andyslab.geobud.ui.quiz.QuizScreen
 
 @Composable
-fun RootNavGraph() {
+fun RootNavGraph(darkMode: Boolean?) {
     val navController: NavHostController = rememberNavController()
 
     NavHost(navController = navController , route = Graph.ROOT, startDestination = Screen.LoadingScreen.route,){
         composable(route = Screen.LoadingScreen.route){
-            MenuScreen(navController)
+            MenuScreen(navController, darkMode)
         }
         composable(
             route = Screen.LandmarksQuizScreen.route,

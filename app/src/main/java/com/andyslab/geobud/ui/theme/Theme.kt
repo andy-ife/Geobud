@@ -83,7 +83,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun GeobudTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    forceDarkTheme: Boolean = false,
+    forceDarkTheme: Boolean? = null,
     // Dynamic color is available on Android 12+
     // dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -94,7 +94,9 @@ fun GeobudTheme(
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
-        forceDarkTheme -> DarkColorScheme
+        forceDarkTheme == true -> DarkColorScheme
+        forceDarkTheme == false -> LightColorScheme
+        // if forceDarkTheme is null, use system default
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

@@ -1,22 +1,32 @@
 package com.andyslab.geobud.ui.main
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.player.PlayerRepository
+import com.andyslab.geobud.domain.ObserveThemeChangesUseCase
 import com.andyslab.geobud.domain.StartTimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val playerRepo: PlayerRepository,
-    private val startTimerUseCase: StartTimerUseCase
+    private val startTimerUseCase: StartTimerUseCase,
 ): ViewModel() {
+
+    private val _themeState = MutableStateFlow<Boolean?>(null)
+    val themeState = _themeState.asLiveData()
 
     private var timerJob = Job()
         get() {
@@ -24,6 +34,16 @@ class MainViewModel @Inject constructor(
             return field
         }
     lateinit var player: Player
+
+    init{
+        viewModelScope.launch {
+            _themeState.update { playerRepo.loadPlayerData().first().data!!.forceDarkMode }
+
+            ObserveThemeChangesUseCase.themeState.collect{ newState ->
+                _themeState.update{ newState }
+            }
+        }
+    }
 
     fun startTimer(){
         timerJob.cancel()

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
+import com.andyslab.geobud.domain.ObserveThemeChangesUseCase
 import com.andyslab.geobud.domain.StartTimerUseCase
 import com.andyslab.geobud.utils.Resource
 import com.andyslab.geobud.utils.timeMillisToString
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val landmarkRepo: LandmarkRepository,
     private val playerRepo: PlayerRepository,
+    private val observeThemeChangesUseCase: ObserveThemeChangesUseCase
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow<MenuUiState?>(null)
@@ -89,6 +91,14 @@ class MenuViewModel @Inject constructor(
         GlobalScope.launch{
             player.isSoundEnabled = !player.isSoundEnabled
             playerRepo.savePlayerData(player)
+        }
+    }
+
+    fun toggleTheme(newMode: Boolean?){
+        GlobalScope.launch {
+            player.forceDarkMode = newMode
+            playerRepo.savePlayerData(player)
+            observeThemeChangesUseCase(newMode)
         }
     }
 

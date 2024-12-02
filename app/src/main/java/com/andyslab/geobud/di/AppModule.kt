@@ -5,8 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.andyslab.geobud.FetchPhotosWorkerFactory
 import com.andyslab.geobud.data.local.db.LandmarkDatabase
 import com.andyslab.geobud.data.local.sources.CountriesDataSource
@@ -15,6 +13,7 @@ import com.andyslab.geobud.data.repository.landmark.LandmarkRepoImpl
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
 import com.andyslab.geobud.data.repository.player.PlayerRepository
+import com.andyslab.geobud.domain.ObserveThemeChangesUseCase
 import com.andyslab.geobud.domain.StartTimerUseCase
 import dagger.Module
 import dagger.Provides
@@ -91,6 +90,12 @@ class AppModule {
     @Singleton
     fun provideTimerUseCase(): StartTimerUseCase{
         return StartTimerUseCase()
+    }
+
+    @Provides
+    @Singleton
+    fun provideForceDarkThemeUseCase(): ObserveThemeChangesUseCase{
+        return ObserveThemeChangesUseCase()
     }
 
     @Provides

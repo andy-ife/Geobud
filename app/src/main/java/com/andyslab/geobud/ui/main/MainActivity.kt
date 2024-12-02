@@ -42,8 +42,12 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         viewModel.startTimer()
-        setContent {
-            GeobudTheme { RootNavGraph() }
+        viewModel.themeState.observe(this){ data ->
+            when(data){
+                true -> setContent { GeobudTheme(forceDarkTheme = true) { RootNavGraph(true) } }
+                false -> setContent { GeobudTheme(forceDarkTheme = false) { RootNavGraph(false) } }
+                null -> setContent { GeobudTheme(forceDarkTheme = null) { RootNavGraph(null) } }
+            }
         }
     }
 

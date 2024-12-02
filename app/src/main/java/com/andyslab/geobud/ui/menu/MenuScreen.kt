@@ -74,12 +74,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuScreen(
     navController: NavHostController,
-    viewModel: MenuViewModel = hiltViewModel()
+    darkMode: Boolean?,
+    viewModel: MenuViewModel = hiltViewModel(),
 ){
     val context = LocalContext.current
     val activity = context.findActivity()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    MenuScreen(navController, activity, uiState, viewModel::toggleSound, viewModel::resetProgress, viewModel::load)
+    MenuScreen(navController, activity, uiState, darkMode, viewModel::toggleSound, viewModel::toggleTheme, viewModel::resetProgress, viewModel::load)
 }
 
 //Stateless
@@ -88,7 +89,9 @@ fun MenuScreen(
     navController: NavHostController,
     activity: ComponentActivity,
     uiState: MenuUiState?,
+    darkMode: Boolean?,
     toggleSound: () -> Unit,
+    toggleTheme: (Boolean?) -> Unit,
     resetProgress: () -> Unit,
     load: () -> Unit,
     ) {
@@ -114,8 +117,19 @@ fun MenuScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        val painter = when(darkMode){
+            true -> painterResource(id = R.drawable.background_dark)
+            false -> painterResource(id = R.drawable.background_light)
+            null -> {
+                if(isSystemInDarkTheme()){
+                    painterResource(R.drawable.background_dark)
+                }else{
+                    painterResource(R.drawable.background_light)
+                }
+            }
+        }
         Image(
-            painter = if (!isSystemInDarkTheme()) painterResource(id = R.drawable.background_light) else painterResource(id = R.drawable.background_dark),
+            painter = painter,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
@@ -316,7 +330,9 @@ fun MenuScreen(
                     val chooser = Intent.createChooser(intent, title)
                     activity.startActivity(chooser)
                 },
-                toggleSoundClick = toggleSound
+                toggleSoundClick = toggleSound,
+                shouldForceDarkMode = uiState.data.forceDarkMode,
+                toggleTheme = toggleTheme,
             )
         }
 

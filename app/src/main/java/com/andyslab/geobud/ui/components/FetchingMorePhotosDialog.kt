@@ -89,6 +89,7 @@ fun FetchingMorePhotosDialog(
                     .height(12.dp)
                     .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
                 color = MaterialTheme.colorScheme.outlineVariant,
+                gapSize = -300.dp,
                 trackColor = MaterialTheme.colorScheme.outline,
                 drawStopIndicator = {}
             )

@@ -66,6 +66,10 @@ class LandmarkRepoImpl @Inject constructor(
                                 photographerUrl = photo.photographer_url
                             )
                             db.dao.updateLandmark(landmark)
+                        }else{
+                            emit(Resource.Error("Too many requests. Try again in an hour."))
+                            Log.d("Fetch photos error", response.code().toString())
+                            return@flow
                         }
                     }catch(e: Exception){
                         emit(Resource.Error(e.message.toString())) // "Couldn't fetch photos. Check your internet connection and try again."

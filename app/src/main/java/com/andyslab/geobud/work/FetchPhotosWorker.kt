@@ -41,7 +41,7 @@ class FetchPhotosWorker @AssistedInject constructor(
                     }
                 }
             }
-            if(success) Result.success() else Result.retry() // retry for errors from the repository function
+            if (success) Result.success() else Result.retry() // retry for errors from the repository function
         }catch(e: Exception){
             Log.d("Worker error", e.message.toString())
             Result.failure() // failure for some other error

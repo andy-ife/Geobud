@@ -37,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -255,7 +256,11 @@ fun QuizScreen(
             scaffoldState = scaffoldState,
             sheetPeekHeight = 0.dp,
             sheetContainerColor = MaterialTheme.colorScheme.surface,
-            snackbarHost = {SnackbarHost(hostState = snackbarHostState, modifier = Modifier.offset(y = -40.dp))}
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState, modifier = Modifier.offset(y = -40.dp)){
+                    Snackbar(it, contentColor = MaterialTheme.colorScheme.onSurface, containerColor = MaterialTheme.colorScheme.surface)
+                }
+            }
             ) {
 
             Image(

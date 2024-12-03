@@ -41,7 +41,11 @@ class MainActivity : ComponentActivity() {
         WorkManager.getInstance(applicationContext).enqueue(worker)
 
         enableEdgeToEdge()
+
+        //start hearts refill timer
         viewModel.startTimer()
+
+        //observe theme changes
         viewModel.themeState.observe(this){ data ->
             when(data){
                 true -> setContent { GeobudTheme(forceDarkTheme = true) { RootNavGraph(true) } }

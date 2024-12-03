@@ -121,7 +121,3 @@ dependencies {
     // Workmanager
     implementation ("androidx.work:work-runtime-ktx:2.10.0")
 }
-
-//kapt{
-//    correctErrorTypes = true
-//}

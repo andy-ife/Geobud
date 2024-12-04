@@ -41,6 +41,8 @@ class QuizViewModel
         private lateinit var player: Player
         private lateinit var lastPlayer: Player
 
+        private var combo = 0
+
         init {
             getPhoto()
             viewModelScope.launch {
@@ -142,6 +144,7 @@ class QuizViewModel
                         delay(200) // give option buttons time to vanish
                         landmarkRepo.addProgress(player)
                     }
+                    combo++
                     result = true
                 } else {
                     player.hearts--
@@ -156,13 +159,15 @@ class QuizViewModel
                             it.copy(answerCorrect = null)
                         }
                     }
+                    combo=0
                 }
             }
             return result
         }
 
         fun generateExclamation(): String {
-            return setOf(
+            return if (combo > 2)
+                setOf(
                 "Nice!",
                 "Great job!",
                 "You're on fire!",
@@ -170,7 +175,15 @@ class QuizViewModel
                 "Great!",
                 "Cool!",
                 "Geo-master!",
+                "Globetrotter!",
             ).random()
+            else
+                setOf(
+                    "Nice!",
+                    "Great job!",
+                    "Great!",
+                    "Cool!",
+                ).random()
         }
 
         fun savePhoto(

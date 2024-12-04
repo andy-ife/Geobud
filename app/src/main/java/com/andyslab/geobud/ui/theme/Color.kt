@@ -22,4 +22,4 @@ val gray = Color.Gray
 // --------------------- Dark -------------------
 val green_dark = Color(0xFF81C784)
 val gray_background = Color(0xFF202020)
-val blue_extra_dark = Color(0xFF171D2F)
+val blue_extra_dark = Color(0xFF404040)

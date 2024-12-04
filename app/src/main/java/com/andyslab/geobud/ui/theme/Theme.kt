@@ -12,73 +12,59 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = blue_primary,
-    onPrimary = Color.White,
-    inversePrimary = blue_primary_transparent,
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = blue_primary,
+        onPrimary = Color.White,
+        inversePrimary = blue_primary_transparent,
+        secondary = green_primary,
+        onSecondary = Color.White,
+        tertiary = gray,
+        tertiaryContainer = black_transparent1,
+        onTertiaryContainer = Color.White,
+        background = gray_background,
+        onBackground = Color.White,
+        surface = gray_background,
+        onSurface = Color.White,
+        surfaceTint = blue_primary_glow,
+        surfaceVariant = green_primary_dark,
+        onSurfaceVariant = green_primary_medium,
+        inverseOnSurface = green_dark,
+        surfaceContainerLow = blue_extra_dark,
+        outline = Color.DarkGray,
+        outlineVariant = Color.Yellow,
+        scrim = black_transparent2,
+        error = red_error,
+    )
 
-    secondary = green_primary,
-    onSecondary = Color.White,
-
-    tertiary = gray,
-    tertiaryContainer = black_transparent1,
-    onTertiaryContainer = Color.White,
-
-    background = gray_background,
-    onBackground = Color.White,
-
-    surface = gray_background,
-    onSurface = Color.White,
-    surfaceTint = blue_primary_glow,
-
-    surfaceVariant = green_primary_dark,
-    onSurfaceVariant = green_primary_medium,
-    inverseOnSurface = green_dark,
-
-    surfaceContainerLow = blue_extra_dark,
-
-    outline = Color.DarkGray,
-    outlineVariant = Color.Yellow,
-
-    scrim = black_transparent2,
-    error = red_error
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = blue_primary,
-    onPrimary = Color.White,
-    primaryContainer = Color.White,
-    onPrimaryContainer = Color.Black,
-    inversePrimary = blue_primary_transparent,
-
-    secondary = green_primary,
-    onSecondary = Color.White,
-    secondaryContainer = Color.White,
-    onSecondaryContainer = Color.Black,
-
-    tertiary = gray,
-    tertiaryContainer = black_transparent1,
-    onTertiaryContainer = Color.White,
-
-    background = Color.White,
-    onBackground = Color.Black,
-
-    surface = Color.White,
-    onSurface = Color.Black,
-    surfaceTint = blue_primary_glow,
-
-    surfaceVariant = green_primary_dark,
-    onSurfaceVariant = green_primary_medium,
-    inverseOnSurface = green_primary_medium,
-
-    surfaceContainerLow = blue_extra_light,
-
-    outline = Color.Black,
-    outlineVariant = Color.Yellow,
-
-    scrim = black_transparent2,
-    error = red_error
-)
+private val LightColorScheme =
+    lightColorScheme(
+        primary = blue_primary,
+        onPrimary = Color.White,
+        primaryContainer = Color.White,
+        onPrimaryContainer = Color.Black,
+        inversePrimary = blue_primary_transparent,
+        secondary = green_primary,
+        onSecondary = Color.White,
+        secondaryContainer = Color.White,
+        onSecondaryContainer = Color.Black,
+        tertiary = gray,
+        tertiaryContainer = black_transparent1,
+        onTertiaryContainer = Color.White,
+        background = Color.White,
+        onBackground = Color.Black,
+        surface = Color.White,
+        onSurface = Color.Black,
+        surfaceTint = blue_primary_glow,
+        surfaceVariant = green_primary_dark,
+        onSurfaceVariant = green_primary_medium,
+        inverseOnSurface = green_primary_medium,
+        surfaceContainerLow = blue_extra_light,
+        outline = Color.Black,
+        outlineVariant = Color.Yellow,
+        scrim = black_transparent2,
+        error = red_error,
+    )
 
 @Composable
 fun GeobudTheme(
@@ -86,20 +72,20 @@ fun GeobudTheme(
     forceDarkTheme: Boolean? = null,
     // Dynamic color is available on Android 12+
     // dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-
-    val colorScheme = when {
+    val colorScheme =
+        when {
 //        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
 //            val context = LocalContext.current
 //            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 //        }
-        forceDarkTheme == true -> DarkColorScheme
-        forceDarkTheme == false -> LightColorScheme
-        // if forceDarkTheme is null, use system default
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+            forceDarkTheme == true -> DarkColorScheme
+            forceDarkTheme == false -> LightColorScheme
+            // if forceDarkTheme is null, use system default
+            darkTheme -> DarkColorScheme
+            else -> LightColorScheme
+        }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -112,6 +98,6 @@ fun GeobudTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

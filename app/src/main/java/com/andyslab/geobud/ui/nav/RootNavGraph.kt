@@ -13,21 +13,21 @@ import com.andyslab.geobud.ui.quiz.QuizScreen
 fun RootNavGraph(darkMode: Boolean?) {
     val navController: NavHostController = rememberNavController()
 
-    NavHost(navController = navController , route = Graph.ROOT, startDestination = Screen.LoadingScreen.route,){
-        composable(route = Screen.LoadingScreen.route){
+    NavHost(navController = navController, route = Graph.ROOT, startDestination = Screen.LoadingScreen.route) {
+        composable(route = Screen.LoadingScreen.route) {
             MenuScreen(navController, darkMode)
         }
         composable(
             route = Screen.LandmarksQuizScreen.route,
-            enterTransition = {slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start)},
-            exitTransition = {slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)},
-            popExitTransition = {slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)}
-        ){
+            enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start) },
+            exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) },
+            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) },
+        ) {
             QuizScreen(navController)
         }
     }
 }
 
-object Graph{
+object Graph {
     const val ROOT = "root_graph"
 }

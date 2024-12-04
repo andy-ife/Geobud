@@ -8,9 +8,17 @@ import kotlinx.coroutines.flow.Flow
 
 interface LandmarkRepository {
     suspend fun fetchLandmarkPhotos(limit: Int): Flow<Resource<Float>>
+
     suspend fun addProgress(player: Player)
+
     suspend fun getLandmarkById(id: Int): Landmark
+
     suspend fun getMaxId(): Int
+
     suspend fun resetProgress()
-    suspend fun savePhotoToExternalStorage(displayName: String, bmp: Bitmap): Boolean
+
+    suspend fun savePhotoToExternalStorage(
+        displayName: String,
+        bmp: Bitmap,
+    ): Boolean
 }

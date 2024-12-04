@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,13 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -39,72 +36,80 @@ fun FetchingMorePhotosDialog(
     modifier: Modifier = Modifier,
     progress: Float,
     onDismiss: () -> Unit,
-){
+) {
     val loadAnim by animateFloatAsState(
         targetValue = progress,
-        animationSpec = tween(
-            durationMillis = 250,
-            easing = FastOutSlowInEasing
-        ),
-        label = "loading bar anim"
+        animationSpec =
+            tween(
+                durationMillis = 250,
+                easing = FastOutSlowInEasing,
+            ),
+        label = "loading bar anim",
     )
 
     Dialog(
         onDismissRequest = { onDismiss() },
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = false,
-        )
+        properties =
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Card(
-            modifier = modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(),
+            modifier =
+                modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
             shape = RoundedCornerShape(4.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                ),
             elevation = CardDefaults.cardElevation(5.dp),
-        ) {Column(
-            modifier = Modifier.padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-            Text(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                text = stringResource(R.string.just_a_second),
-                fontSize = 16.sp,
-                fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier =
+                        Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                    text = stringResource(R.string.just_a_second),
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                )
 
-            Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-            LinearProgressIndicator(
-                progress = { loadAnim },
-                modifier = Modifier
-                    .height(12.dp)
-                    .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
-                color = MaterialTheme.colorScheme.outlineVariant,
-                gapSize = -300.dp,
-                trackColor = MaterialTheme.colorScheme.outline,
-                drawStopIndicator = {}
-            )
+                LinearProgressIndicator(
+                    progress = { loadAnim },
+                    modifier =
+                        Modifier
+                            .height(12.dp)
+                            .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    gapSize = -300.dp,
+                    trackColor = MaterialTheme.colorScheme.outline,
+                    drawStopIndicator = {},
+                )
 
-            Text(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                text = "${stringResource(R.string.fetching_more_photos)} ...",
-                fontSize = 16.sp,
-                fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
-        }
+                Text(
+                    modifier =
+                        Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                    text = "${stringResource(R.string.fetching_more_photos)} ...",
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

@@ -37,98 +37,108 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
+// ----------------------Compose Extensions-----------------------------
+fun Modifier.shimmerLoadingEffect(): Modifier =
+    composed {
+        var size by remember {
+            mutableStateOf(IntSize.Zero)
+        }
 
-/*----------------------Compose Extensions-----------------------------*/
-fun Modifier.shimmerLoadingEffect(): Modifier = composed{
-    var size by remember{
-        mutableStateOf(IntSize.Zero)
-    }
+        val transition = rememberInfiniteTransition(label = "shimmer transition")
+        val startOffsetX by transition.animateFloat(
+            initialValue = -5 * size.width.toFloat(),
+            targetValue = 5 * size.width.toFloat(),
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(1000),
+                ),
+            label = "shimmer",
+        )
 
-    val transition = rememberInfiniteTransition(label = "shimmer transition")
-    val startOffsetX by transition.animateFloat(
-        initialValue = -5 * size.width.toFloat(),
-        targetValue = 5 * size.width.toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000)
-        ), label = "shimmer"
-    )
-
-    background(
-        Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF404040),
-                Color(0xFF252525),
-                Color(0xFF404040)
+        background(
+            Brush.linearGradient(
+                colors =
+                    listOf(
+                        Color(0xFF404040),
+                        Color(0xFF252525),
+                        Color(0xFF404040),
+                    ),
+                start = Offset(startOffsetX, 0f),
+                end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat()),
             ),
-            start = Offset(startOffsetX, 0f),
-            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
-        ),
-    ).onGloballyPositioned {
-        size = it.size
+        ).onGloballyPositioned {
+            size = it.size
+        }
     }
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Modifier.onClickWithScaleAnim(scaleDown: Float, onClick: () -> Unit = {}) : Modifier{
-    val selected = remember {
-        mutableStateOf(false)
-    }
+fun Modifier.onClickWithScaleAnim(
+    scaleDown: Float,
+    onClick: () -> Unit = {},
+): Modifier {
+    val selected =
+        remember {
+            mutableStateOf(false)
+        }
 
-    val scale = animateFloatAsState(targetValue = if (selected.value) scaleDown else 1f,
-        label = "scale anim",
-        animationSpec = tween(
-            delayMillis = 0,
-            durationMillis = 50,
+    val scale =
+        animateFloatAsState(
+            targetValue = if (selected.value) scaleDown else 1f,
+            label = "scale anim",
+            animationSpec =
+                tween(
+                    delayMillis = 0,
+                    durationMillis = 50,
+                ),
         )
-    )
 
     return(
-            this
-                .scale(scale.value)
-                .pointerInteropFilter {
-                    when (it.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            selected.value = true
-                        }
-
-                        MotionEvent.ACTION_UP -> {
-                            selected.value = false
-                            onClick()
-                        }
-
-                        MotionEvent.ACTION_CANCEL -> {
-                            selected.value = false
-                        }
+        this
+            .scale(scale.value)
+            .pointerInteropFilter {
+                when (it.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        selected.value = true
                     }
-                    true
-                }
-            )
 
+                    MotionEvent.ACTION_UP -> {
+                        selected.value = false
+                        onClick()
+                    }
+
+                    MotionEvent.ACTION_CANCEL -> {
+                        selected.value = false
+                    }
+                }
+                true
+            }
+    )
 }
 
 fun Modifier.clickableNoRipple(
     interactionSource: MutableInteractionSource,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) = run {
     this.then(
         Modifier.clickable(
             interactionSource = interactionSource,
             indication = null,
-            onClick = {onClick()}
-        )
+            onClick = { onClick() },
+        ),
     )
 }
 
-/*----------------------Activity extensions-------------------------*/
-fun ComponentActivity.hideSystemUI(){
+// ----------------------Activity extensions-------------------------
+fun ComponentActivity.hideSystemUI() {
     val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
-    windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat
-        .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    windowInsetsController.systemBarsBehavior =
+        WindowInsetsControllerCompat
+            .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
 }
 
-fun ComponentActivity.showSystemUI(){
+fun ComponentActivity.showSystemUI() {
     val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
     windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
     windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
@@ -136,25 +146,24 @@ fun ComponentActivity.showSystemUI(){
 
 fun Context.findActivity(): ComponentActivity {
     var context = this
-    while(context is ContextWrapper){
-        if(context is ComponentActivity) return context
+    while (context is ContextWrapper) {
+        if (context is ComponentActivity) return context
         context = context.baseContext
     }
     throw IllegalStateException("no activity")
 }
 
-fun Context.hasWriteStoragePermissions(): Boolean{
-    return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+fun Context.hasWriteStoragePermissions(): Boolean {
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
         this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-    else
+    } else {
         true
+    }
 }
 
-fun Context.openAppSettings(){
+fun Context.openAppSettings() {
     Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
+        Uri.fromParts("package", packageName, null),
     ).also(::startActivity)
 }
-
-

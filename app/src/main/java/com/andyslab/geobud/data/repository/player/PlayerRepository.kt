@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
     suspend fun loadPlayerData(): Flow<Resource<Player>>
+
     suspend fun savePlayerData(player: Player): Boolean
+
     fun generateOptions(landmark: Landmark): Set<String>
 }

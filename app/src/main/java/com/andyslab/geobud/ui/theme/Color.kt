@@ -2,7 +2,7 @@ package com.andyslab.geobud.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-/* -------------------- Light --------------------- */
+// -------------------- Light ---------------------
 val blue_primary = Color(0xFF1976D2)
 val blue_primary_glow = Color(0xFF53A0EA)
 val blue_primary_transparent = Color(0x651976D2)
@@ -19,7 +19,7 @@ val black_transparent2 = Color(0x19000000)
 
 val gray = Color.Gray
 
-/* --------------------- Dark -------------------*/
+// --------------------- Dark -------------------
 val green_dark = Color(0xFF81C784)
 val gray_background = Color(0xFF202020)
 val blue_extra_dark = Color(0xFF171D2F)

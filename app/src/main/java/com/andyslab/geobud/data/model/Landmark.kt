@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "landmark",
-    indices = [Index(value = ["id"], name = "id", unique = true, orders = [Index.Order.ASC])]
+    indices = [Index(value = ["id"], name = "id", unique = true, orders = [Index.Order.ASC])],
 )
 data class Landmark(
     @PrimaryKey
@@ -19,4 +19,4 @@ data class Landmark(
     val photoUrl: String?,
     val photographer: String?,
     val photographerUrl: String?,
-    )
+)

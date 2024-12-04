@@ -1,12 +1,12 @@
 package com.andyslab.geobud.data.remote
 
-//Class representing a JSON response from pexels API.
+// Class representing a JSON response from pexels API.
 data class LandmarkPhotoDto(
     val next_page: String,
     val page: Int,
     val per_page: Int,
     val photos: List<PhotoDto>,
-    val total_results: Int
+    val total_results: Int,
 )
 
 data class PhotoDto(
@@ -20,7 +20,7 @@ data class PhotoDto(
     val photographer_url: String,
     val src: SrcDto,
     val url: String,
-    val width: Int
+    val width: Int,
 )
 
 data class SrcDto(
@@ -31,5 +31,5 @@ data class SrcDto(
     val original: String,
     val portrait: String,
     val small: String,
-    val tiny: String
+    val tiny: String,
 )

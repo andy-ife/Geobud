@@ -25,29 +25,31 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val workConstraints = Constraints
-            .Builder()
-            .setRequiresBatteryNotLow(true)
-            .build()
+        val workConstraints =
+            Constraints
+                .Builder()
+                .setRequiresBatteryNotLow(true)
+                .build()
 
-        val worker = OneTimeWorkRequestBuilder<FetchPhotosWorker>()
-            .setInitialDelay(Duration.ofSeconds(10))
-            .setConstraints(workConstraints)
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                duration = Duration.ofSeconds(10)
-            )
-            .build()
+        val worker =
+            OneTimeWorkRequestBuilder<FetchPhotosWorker>()
+                .setInitialDelay(Duration.ofSeconds(10))
+                .setConstraints(workConstraints)
+                .setBackoffCriteria(
+                    backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                    duration = Duration.ofSeconds(10),
+                )
+                .build()
         WorkManager.getInstance(applicationContext).enqueue(worker)
 
         enableEdgeToEdge()
 
-        //start hearts refill timer
+        // start hearts refill timer
         viewModel.startTimer()
 
-        //observe theme changes
-        viewModel.themeState.observe(this){ data ->
-            when(data){
+        // observe theme changes
+        viewModel.themeState.observe(this) { data ->
+            when (data) {
                 true -> setContent { GeobudTheme(forceDarkTheme = true) { RootNavGraph(true) } }
                 false -> setContent { GeobudTheme(forceDarkTheme = false) { RootNavGraph(false) } }
                 null -> setContent { GeobudTheme(forceDarkTheme = null) { RootNavGraph(null) } }
@@ -60,4 +62,3 @@ class MainActivity : ComponentActivity() {
         viewModel.stopTimer()
     }
 }
-

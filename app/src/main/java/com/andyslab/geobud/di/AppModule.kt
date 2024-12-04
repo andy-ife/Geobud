@@ -29,15 +29,18 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
-
     @Provides
-    fun provideContext(@ApplicationContext context: Context): Context{
+    fun provideContext(
+        @ApplicationContext context: Context,
+    ): Context {
         return context
     }
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): LandmarkDatabase{
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+    ): LandmarkDatabase {
         return Room.databaseBuilder(context, LandmarkDatabase::class.java, "landmark.db")
             .createFromAsset("database/landmark.db")
             .build()
@@ -45,12 +48,12 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideApi(): LandmarkPhotoAPI{
+    fun provideApi(): LandmarkPhotoAPI {
         return Retrofit.Builder()
-                .baseUrl("https://api.pexels.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(LandmarkPhotoAPI::class.java)
+            .baseUrl("https://api.pexels.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(LandmarkPhotoAPI::class.java)
     }
 
     @Provides
@@ -61,7 +64,9 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providePlayerDatastore(@ApplicationContext context: Context): DataStore<Preferences> {
+    fun providePlayerDatastore(
+        @ApplicationContext context: Context,
+    ): DataStore<Preferences> {
         return context.dataStore
     }
 
@@ -70,8 +75,8 @@ class AppModule {
     fun providePlayerRepository(
         countries: CountriesDataSource,
         db: LandmarkDatabase,
-        dataStore: DataStore<Preferences>
-    ): PlayerRepository{
+        dataStore: DataStore<Preferences>,
+    ): PlayerRepository {
         return PlayerRepoImpl(dataStore, countries, db)
     }
 
@@ -81,26 +86,26 @@ class AppModule {
         @ApplicationContext context: Context,
         db: LandmarkDatabase,
         api: LandmarkPhotoAPI,
-        repo: PlayerRepository
-    ): LandmarkRepository{
+        repo: PlayerRepository,
+    ): LandmarkRepository {
         return LandmarkRepoImpl(context, db, api, repo)
     }
 
     @Provides
     @Singleton
-    fun provideTimerUseCase(): StartTimerUseCase{
+    fun provideTimerUseCase(): StartTimerUseCase {
         return StartTimerUseCase()
     }
 
     @Provides
     @Singleton
-    fun provideForceDarkThemeUseCase(): ObserveThemeChangesUseCase{
+    fun provideForceDarkThemeUseCase(): ObserveThemeChangesUseCase {
         return ObserveThemeChangesUseCase()
     }
 
     @Provides
     @Singleton
-    fun provideFetchPhotosWorkerFactory(repo: LandmarkRepository): FetchPhotosWorkerFactory{
+    fun provideFetchPhotosWorkerFactory(repo: LandmarkRepository): FetchPhotosWorkerFactory {
         return FetchPhotosWorkerFactory(repo)
     }
 }

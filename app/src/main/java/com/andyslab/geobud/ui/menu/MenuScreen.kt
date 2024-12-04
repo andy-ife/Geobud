@@ -1,6 +1,5 @@
 package com.andyslab.geobud.ui.menu
 
-
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
@@ -70,20 +69,29 @@ import com.andyslab.geobud.utils.findActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-//Stateful
+// Stateful
 @Composable
 fun MenuScreen(
     navController: NavHostController,
     darkMode: Boolean?,
     viewModel: MenuViewModel = hiltViewModel(),
-){
+) {
     val context = LocalContext.current
     val activity = context.findActivity()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    MenuScreen(navController, activity, uiState, darkMode, viewModel::toggleSound, viewModel::toggleTheme, viewModel::resetProgress, viewModel::load)
+    MenuScreen(
+        navController,
+        activity,
+        uiState,
+        darkMode,
+        viewModel::toggleSound,
+        viewModel::toggleTheme,
+        viewModel::resetProgress,
+        viewModel::load,
+    )
 }
 
-//Stateless
+// Stateless
 @Composable
 fun MenuScreen(
     navController: NavHostController,
@@ -94,72 +102,78 @@ fun MenuScreen(
     toggleTheme: (Boolean?) -> Unit,
     resetProgress: () -> Unit,
     load: () -> Unit,
-    ) {
-
-    val progress = if(uiState is MenuUiState.Loading) uiState.progress else 0f
+) {
+    val progress = if (uiState is MenuUiState.Loading) uiState.progress else 0f
 
     val loadAnim by animateFloatAsState(
         targetValue = progress,
-        animationSpec = tween(
-            durationMillis = 250,
-            easing = FastOutSlowInEasing
-        ),
-        label = "loading bar anim"
+        animationSpec =
+            tween(
+                durationMillis = 250,
+                easing = FastOutSlowInEasing,
+            ),
+        label = "loading bar anim",
     )
 
     val scope = rememberCoroutineScope()
-    var showTimerPopup by remember{mutableStateOf(false)}
-    var showSettings by remember{mutableStateOf(false)}
-    var showResetProgressDialog by remember{mutableStateOf(false)}
-
+    var showTimerPopup by remember { mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
+    var showResetProgressDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
-        val painter = when(darkMode){
-            true -> painterResource(id = R.drawable.background_dark)
-            false -> painterResource(id = R.drawable.background_light)
-            null -> {
-                if(isSystemInDarkTheme()){
-                    painterResource(R.drawable.background_dark)
-                }else{
-                    painterResource(R.drawable.background_light)
+        val painter =
+            when (darkMode) {
+                true -> painterResource(id = R.drawable.background_dark)
+                false -> painterResource(id = R.drawable.background_light)
+                null -> {
+                    if (isSystemInDarkTheme()) {
+                        painterResource(R.drawable.background_dark)
+                    } else {
+                        painterResource(R.drawable.background_light)
+                    }
                 }
             }
-        }
         Image(
             painter = painter,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
 
         Image(
             painter = painterResource(id = R.drawable.geobud_logo),
             contentDescription = stringResource(R.string.app_logo_desc),
-            modifier = Modifier
-                .size(200.dp)
-                .offset(y = -80.dp)
+            modifier =
+                Modifier
+                    .size(200.dp)
+                    .offset(y = -80.dp),
         )
 
-        if(uiState is MenuUiState.Success && showTimerPopup){
+        if (uiState is MenuUiState.Success && showTimerPopup) {
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 100.dp),) {
-                Box(modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.tertiaryContainer,
-                        RoundedCornerShape(8.dp)
-                    )
-                    .padding(8.dp)) {
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp, vertical = 100.dp),
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .background(
+                                MaterialTheme.colorScheme.tertiaryContainer,
+                                RoundedCornerShape(8.dp),
+                            )
+                            .padding(8.dp),
+                ) {
                     Text(
                         text = "${stringResource(R.string.more_in)} ${uiState.timeTillNextHeart}",
                         color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        fontFamily = FontFamily(Font(R.font.bubblegum_sans))
+                        fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     )
                 }
             }
@@ -169,134 +183,141 @@ fun MenuScreen(
             visible = uiState is MenuUiState.Success,
             enter = slideInVertically(),
             exit = slideOutVertically(),
-            ) {
-                Row (
-                    modifier = Modifier
+        ) {
+            Row(
+                modifier =
+                    Modifier
                         .fillMaxSize()
                         .padding(horizontal = 20.dp, vertical = 40.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ){
-                    IconButton(
-                        onClick = {showSettings = true},
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Color.Transparent
-                        )
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.settings_icon),
-                            contentDescription = stringResource(R.string.settings)
-                        )
-                    }
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                IconButton(
+                    onClick = { showSettings = true },
+                    colors =
+                        IconButtonDefaults.iconButtonColors(
+                            containerColor = Color.Transparent,
+                        ),
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.settings_icon),
+                        contentDescription = stringResource(R.string.settings),
+                    )
+                }
 
-                    val text = if(uiState is MenuUiState.Success)uiState.data.hearts.toString() else ""
-                    TopBarItem(
-                        modifier = Modifier.clickable{
-                            if(uiState is MenuUiState.Success && uiState.data.hearts < 3){
-                                scope.launch{
+                val text = if (uiState is MenuUiState.Success)uiState.data.hearts.toString() else ""
+                TopBarItem(
+                    modifier =
+                        Modifier.clickable {
+                            if (uiState is MenuUiState.Success && uiState.data.hearts < 3) {
+                                scope.launch {
                                     showTimerPopup = true
                                     delay(5000)
                                     showTimerPopup = false
                                 }
                             }
                         },
-                        icon = R.drawable.heart,
-                        text = text
-                    )
-                }
+                    icon = R.drawable.heart,
+                    text = text,
+                )
             }
+        }
 
         AnimatedVisibility(
             visible = uiState is MenuUiState.Success,
-            enter = slideInVertically(initialOffsetY = { it / 2}),
-            exit = slideOutVertically(targetOffsetY = { it / 2})
+            enter = slideInVertically(initialOffsetY = { it / 2 }),
+            exit = slideOutVertically(targetOffsetY = { it / 2 }),
         ) {
-            Column (
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 100.dp, horizontal = 60.dp),
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 100.dp, horizontal = 60.dp),
                 verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-            TextButton(
-                onClick = {
-                    navController.navigate(Screen.LandmarksQuizScreen.route)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    ),
-                contentPadding = PaddingValues(vertical = 16.dp)
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                val state = if (uiState is MenuUiState.Success) uiState else return@TextButton
-                if(state.data.isFirstLaunch){
-                    Text(
-                        text = stringResource(R.string.start),
-                        fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
-                        fontSize = 20.sp
-                    )
-                }else{
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ){
+                TextButton(
+                    onClick = {
+                        navController.navigate(Screen.LandmarksQuizScreen.route)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                        ),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                ) {
+                    val state = if (uiState is MenuUiState.Success) uiState else return@TextButton
+                    if (state.data.isFirstLaunch) {
                         Text(
-                            text = stringResource(R.string.continue_),
-                            fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
-                            fontSize = 20.sp
+                            text = stringResource(R.string.start),
+                            fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                            fontSize = 20.sp,
                         )
-
-                        Box(contentAlignment = Alignment.Center){
-                            LinearProgressIndicator(
-                                progress = {
-                                    state.data.progress.toFloat() / state.maxId.toFloat()
-                                },
-                                modifier = Modifier
-                                    .height(16.dp)
-                                    .width(160.dp)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.outline,
-                                        RoundedCornerShape(10.dp)
-                                    ),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                strokeCap = StrokeCap.Round,
-                                gapSize = -300.dp,
-                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                drawStopIndicator = {}
-                            )
+                    } else {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
                             Text(
-                                text = "${state.data.progress+1} of ${state.maxId+1}",
-                                fontFamily = FontFamily(Font(R.font.bubblegum_sans),),
-                                fontSize = 14.sp
+                                text = stringResource(R.string.continue_),
+                                fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                                fontSize = 20.sp,
                             )
+
+                            Box(contentAlignment = Alignment.Center) {
+                                LinearProgressIndicator(
+                                    progress = {
+                                        state.data.progress.toFloat() / state.maxId.toFloat()
+                                    },
+                                    modifier =
+                                        Modifier
+                                            .height(16.dp)
+                                            .width(160.dp)
+                                            .border(
+                                                1.dp,
+                                                MaterialTheme.colorScheme.outline,
+                                                RoundedCornerShape(10.dp),
+                                            ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    strokeCap = StrokeCap.Round,
+                                    gapSize = -300.dp,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    drawStopIndicator = {},
+                                )
+                                Text(
+                                    text = "${state.data.progress + 1} of ${state.maxId + 1}",
+                                    fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                                    fontSize = 14.sp,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-        }
-
 
         AnimatedVisibility(
-                visible = uiState is MenuUiState.Loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-            Column (
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 100.dp, horizontal = 60.dp),
+            visible = uiState is MenuUiState.Loading,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 100.dp, horizontal = 60.dp),
                 verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 LinearProgressIndicator(
                     progress = { loadAnim },
-                    modifier = Modifier
-                        .height(12.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
+                    modifier =
+                        Modifier
+                            .height(12.dp)
+                            .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
                     color = MaterialTheme.colorScheme.outlineVariant,
                     trackColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    drawStopIndicator = {}
+                    drawStopIndicator = {},
                 )
 
                 Spacer(modifier = Modifier.size(10.dp))
@@ -305,12 +326,12 @@ fun MenuScreen(
                     text = "${stringResource(R.string.loading)}...",
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
-            }}
+            }
+        }
 
-
-        if(uiState is MenuUiState.Error){
+        if (uiState is MenuUiState.Error) {
             ErrorDialog(
                 modifier = Modifier.align(Alignment.Center),
                 message = uiState.message,
@@ -318,7 +339,7 @@ fun MenuScreen(
             )
         }
 
-        if(showSettings && uiState is MenuUiState.Success){
+        if (showSettings && uiState is MenuUiState.Success) {
             SettingsDialog(
                 soundState = uiState.data.isSoundEnabled,
                 onDismiss = { showSettings = false },
@@ -336,10 +357,10 @@ fun MenuScreen(
             )
         }
 
-        if(showResetProgressDialog){
+        if (showResetProgressDialog) {
             ResetProgressDialog(
                 message = stringResource(R.string.confirm_reset_data),
-                onDismiss = { showResetProgressDialog = false }
+                onDismiss = { showResetProgressDialog = false },
             ) {
                 showSettings = false
                 showResetProgressDialog = false
@@ -348,7 +369,3 @@ fun MenuScreen(
         }
     }
 }
-
-
-
-

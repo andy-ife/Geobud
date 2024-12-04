@@ -1,12 +1,14 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
 android.buildFeatures.buildConfig = true
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-    //id("org.jetbrains.kotlin.kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -25,8 +27,11 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "PEXELS_API_KEY",
-            "\"${project.findProperty("PEXELS_API_KEY") ?: ""}\"")
+        buildConfigField(
+            "String",
+            "PEXELS_API_KEY",
+            "\"${project.findProperty("PEXELS_API_KEY") ?: ""}\"",
+        )
     }
 
     buildTypes {
@@ -34,7 +39,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -76,48 +81,58 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    //Retrofit
+    // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-    //Gson Converter
+    // Gson Converter
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    //Coroutines
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    //Preferences Datastore
+    // Preferences Datastore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    //Gson
-    implementation ("com.google.code.gson:gson:2.10.1")
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1")
 
-    //Navigation compose
-    implementation ("androidx.navigation:navigation-compose:2.8.3")
+    // Navigation compose
+    implementation("androidx.navigation:navigation-compose:2.8.3")
 
-    //Viewmodel compose
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    // Viewmodel compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
-    //Coil
+    // Coil
     implementation("io.coil-kt.coil3:coil-compose:3.0.3")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.3")
 
-    //Lottie
-    implementation ("com.airbnb.android:lottie-compose:6.4.1")
+    // Lottie
+    implementation("com.airbnb.android:lottie-compose:6.4.1")
 
-    //Dagger hilt
-    implementation ("com.google.dagger:hilt-android:2.52")
+    // Dagger hilt
+    implementation("com.google.dagger:hilt-android:2.52")
     ksp("com.google.dagger:hilt-compiler:2.52")
-    //implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    // implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     ksp("androidx.hilt:hilt-compiler:1.2.0")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.hilt:hilt-work:1.2.0")
 
-    //Room
-    implementation ("androidx.room:room-runtime:2.6.1")
-    ksp ("androidx.room:room-compiler:2.6.1")
-    implementation ("androidx.room:room-ktx:2.6.1")
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     // Workmanager
-    implementation ("androidx.work:work-runtime-ktx:2.10.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
+}
+
+ktlint {
+    android = true
+    ignoreFailures = false
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.CHECKSTYLE)
+        reporter(ReporterType.SARIF)
+    }
 }

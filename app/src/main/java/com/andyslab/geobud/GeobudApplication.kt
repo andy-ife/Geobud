@@ -14,23 +14,25 @@ import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltAndroidApp
-class GeobudApplication: Application(), Configuration.Provider {
-
+class GeobudApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: FetchPhotosWorkerFactory
 
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setMinimumLoggingLevel(Log.DEBUG)
-            .setWorkerCoroutineContext(Dispatchers.IO)
-            .setWorkerFactory(workerFactory)
-            .build()
+        get() =
+            Configuration.Builder()
+                .setMinimumLoggingLevel(Log.DEBUG)
+                .setWorkerCoroutineContext(Dispatchers.IO)
+                .setWorkerFactory(workerFactory)
+                .build()
 }
 
-class FetchPhotosWorkerFactory @Inject constructor(private val repo: LandmarkRepository): WorkerFactory() {
-    override fun createWorker(
-        appContext: Context,
-        workerClassName: String,
-        workerParameters: WorkerParameters
-    ): ListenableWorker = FetchPhotosWorker(appContext, workerParameters, repo)
-}
+class FetchPhotosWorkerFactory
+    @Inject
+    constructor(private val repo: LandmarkRepository) : WorkerFactory() {
+        override fun createWorker(
+            appContext: Context,
+            workerClassName: String,
+            workerParameters: WorkerParameters,
+        ): ListenableWorker = FetchPhotosWorker(appContext, workerParameters, repo)
+    }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,66 +37,81 @@ import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
 import com.andyslab.geobud.utils.onClickWithScaleAnim
 
-
 @Composable
 fun TopBarItem(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
-    text:String
-){
-    Box(modifier = modifier
-        .height(45.dp)
-        .width(100.dp),
-        contentAlignment = Alignment.Center){
-
-
-        Text(modifier = Modifier
-            .fillMaxWidth(0.7f)
-            .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp))
-            .align(Alignment.Center)
-            .padding(2.dp),
+    text: String,
+) {
+    Box(
+        modifier =
+            modifier
+                .height(45.dp)
+                .width(100.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.7f)
+                    .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp))
+                    .align(Alignment.Center)
+                    .padding(2.dp),
             text = text,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onTertiaryContainer,
             fontSize = 15.sp,
             fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-            overflow = TextOverflow.Clip
+            overflow = TextOverflow.Clip,
         )
 
         Button3d()
 
-        Image(modifier = Modifier
-            .size(28.dp)
-            .align(Alignment.CenterStart)
-            .offset(x=4.dp),
+        Image(
+            modifier =
+                Modifier
+                    .size(28.dp)
+                    .align(Alignment.CenterStart)
+                    .offset(x = 4.dp),
             painter = painterResource(id = icon),
             contentDescription = stringResource(R.string.top_bar_icon),
-            contentScale = ContentScale.FillBounds,)
-
-
-
+            contentScale = ContentScale.FillBounds,
+        )
     }
 }
 
 @Composable
 fun Button3d() {
-    Row(horizontalArrangement = Arrangement.End,
+    Row(
+        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxSize()
-            .offset((-8).dp)){
-    Box(modifier = Modifier.background(Brush.verticalGradient(
-        listOf(Color(0xFF74D680),
-            Color(0XFF28731B))
-    ),CircleShape)
-        .onClickWithScaleAnim(0.9f)
-        .border(1.dp, Color.White, CircleShape)
-        .size(26.dp)
-        .shadow(2.dp, CircleShape)
-        .clickable {  },
-        contentAlignment = Alignment.Center){
-        Image(painter = painterResource(id = R.drawable.plus),
-            contentDescription = null ,
-            modifier = Modifier.onClickWithScaleAnim(0.9f))
-    }
+        modifier =
+            Modifier.fillMaxSize()
+                .offset((-8).dp),
+    ) {
+        Box(
+            modifier =
+                Modifier.background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color(0xFF74D680),
+                            Color(0XFF28731B),
+                        ),
+                    ),
+                    CircleShape,
+                )
+                    .onClickWithScaleAnim(0.9f)
+                    .border(1.dp, Color.White, CircleShape)
+                    .size(26.dp)
+                    .shadow(2.dp, CircleShape)
+                    .clickable { },
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.plus),
+                contentDescription = null,
+                modifier = Modifier.onClickWithScaleAnim(0.9f),
+            )
+        }
     }
 }

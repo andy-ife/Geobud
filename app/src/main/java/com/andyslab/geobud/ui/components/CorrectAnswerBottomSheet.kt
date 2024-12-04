@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -33,14 +32,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andyslab.geobud.R
 import com.andyslab.geobud.data.model.Landmark
 import com.andyslab.geobud.utils.clickableNoRipple
 import com.andyslab.geobud.utils.onClickWithScaleAnim
-
 
 @Composable
 fun CorrectAnswerBottomSheet(
@@ -53,98 +50,120 @@ fun CorrectAnswerBottomSheet(
     photographerUrlClick: () -> Unit = {},
     savePhotoBtnClick: () -> Unit = {},
     continueButtonClick: () -> Unit = {},
-    ){
+) {
+    val interactionSource = remember { MutableInteractionSource() }
 
-    val interactionSource = remember{ MutableInteractionSource() }
-
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .background(MaterialTheme.colorScheme.surface)
-        .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 60.dp),
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 60.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start){
-        
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center){
-            Text(text = exclamation,
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = exclamation,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.inverseOnSurface,)
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+            )
 
             Spacer(modifier = Modifier.width(30.dp))
 
-            Image(painter = painterResource(id = R.drawable.star),
-                modifier = Modifier.size(24.dp,),
-                contentDescription = null)
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(text = addedStars.toString(),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.inverseOnSurface)
-
-            Spacer(modifier = Modifier.width(30.dp))
-
-            Image(painter = painterResource(id = R.drawable.coin),
+            Image(
+                painter = painterResource(id = R.drawable.star),
                 modifier = Modifier.size(24.dp),
-                contentDescription = null)
+                contentDescription = null,
+            )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(text = addedCoins.toString(),
+            Text(
+                text = addedStars.toString(),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.inverseOnSurface)
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+            )
+
+            Spacer(modifier = Modifier.width(30.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.coin),
+                modifier = Modifier.size(24.dp),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = addedCoins.toString(),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = landmark.name
-                .split(" ")
-                .joinToString(" ")
-                { it.capitalize() },
-            fontSize = 16.sp)
+            text =
+                landmark.name
+                    .split(" ")
+                    .joinToString(" ") { it.capitalize() },
+            fontSize = 16.sp,
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        Text(text = "${landmark.city}, ${landmark.country}",
+        Text(
+            text = "${landmark.city}, ${landmark.country}",
             color = MaterialTheme.colorScheme.tertiary,
-            fontSize = 13.sp)
+            fontSize = 13.sp,
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(
-                MaterialTheme.colorScheme.surfaceContainerLow,
-                RoundedCornerShape(14.dp)
-            )
-            .padding(14.dp)
-        ){
-            Text(text = landmark.funFact,
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(
+                        MaterialTheme.colorScheme.surfaceContainerLow,
+                        RoundedCornerShape(14.dp),
+                    )
+                    .padding(14.dp),
+        ) {
+            Text(
+                text = landmark.funFact,
                 fontSize = 14.sp,
-                textAlign = TextAlign.Center)
+                textAlign = TextAlign.Center,
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = photographer,
-            modifier = Modifier.clickableNoRipple(interactionSource){
-              photographerUrlClick()
-            },
+            modifier =
+                Modifier.clickableNoRipple(interactionSource) {
+                    photographerUrlClick()
+                },
             color = MaterialTheme.colorScheme.primary,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
-            fontStyle = FontStyle.Italic
+            fontStyle = FontStyle.Italic,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            ){
+        ) {
 //            IconButton(onClick = { /*TODO*/ },
 //                modifier = Modifier.onClickWithScaleAnim(0.9f,),
 //                colors = IconButtonDefaults.iconButtonColors(
@@ -170,43 +189,55 @@ fun CorrectAnswerBottomSheet(
 
 //            Spacer(modifier = Modifier.width(100.dp))
 
-            TextButton(onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth(0.45f)
-                    .onClickWithScaleAnim(0.9f) { savePhotoBtnClick() },
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                ),
+            TextButton(
+                onClick = { /*TODO*/ },
+                modifier =
+                    Modifier.fillMaxWidth(0.45f)
+                        .onClickWithScaleAnim(0.9f) { savePhotoBtnClick() },
+                colors =
+                    ButtonDefaults.textButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    ),
                 elevation = ButtonDefaults.buttonElevation(2.dp),
-                contentPadding = PaddingValues(horizontal = 24.dp)
+                contentPadding = PaddingValues(horizontal = 24.dp),
             ) {
-                Text(text = stringResource(R.string.save_photo),
+                Text(
+                    text = stringResource(R.string.save_photo),
                     fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                    fontSize = 14.sp)
+                    fontSize = 14.sp,
+                )
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(painter = painterResource(
-                    id = R.drawable.outline_file_download_24),
+                Icon(
+                    painter =
+                        painterResource(
+                            id = R.drawable.outline_file_download_24,
+                        ),
                     contentDescription = stringResource(R.string.save_photo),
                     modifier = Modifier.size(22.dp),
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSecondary,
                 )
             }
 
-            TextButton(onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth(0.811f)
-                    .onClickWithScaleAnim(0.9f) { continueButtonClick() },
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
+            TextButton(
+                onClick = { /*TODO*/ },
+                modifier =
+                    Modifier.fillMaxWidth(0.811f)
+                        .onClickWithScaleAnim(0.9f) { continueButtonClick() },
+                colors =
+                    ButtonDefaults.textButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
                 elevation = ButtonDefaults.buttonElevation(2.dp),
-                contentPadding = PaddingValues(horizontal = 24.dp)
+                contentPadding = PaddingValues(horizontal = 24.dp),
             ) {
-               Text(text = stringResource(R.string.continue_),
-                   fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
-                   fontSize = 14.sp)
+                Text(
+                    text = stringResource(R.string.continue_),
+                    fontFamily = FontFamily(Font(R.font.bubblegum_sans)),
+                    fontSize = 14.sp,
+                )
             }
-
         }
     }
 }

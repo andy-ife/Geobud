@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class StartTimerUseCase {
+class StartHeartTimerUseCase {
     companion object {
         val millisLeft = MutableSharedFlow<Long>()
         var job = Job()

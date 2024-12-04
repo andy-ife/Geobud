@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
-import com.andyslab.geobud.domain.StartTimerUseCase
+import com.andyslab.geobud.domain.StartHeartTimerUseCase
 import com.andyslab.geobud.utils.Resource
 import com.andyslab.geobud.utils.timeMillisToString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,7 @@ class QuizViewModel
     constructor(
         private val landmarkRepo: LandmarkRepository,
         private val playerRepo: PlayerRepository,
-        private val startTimerUseCase: StartTimerUseCase,
+        private val startHeartTimerUseCase: StartHeartTimerUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(QuizUiState())
         val uiState = _uiState.asStateFlow()
@@ -44,7 +44,7 @@ class QuizViewModel
         init {
             getPhoto()
             viewModelScope.launch {
-                StartTimerUseCase.millisLeft.asSharedFlow().collect { millisLeft ->
+                StartHeartTimerUseCase.millisLeft.asSharedFlow().collect { millisLeft ->
                     player.timeLeftTillNextHeart = millisLeft
                     if (_uiState.value.answerCorrect != true && _uiState.value.savingPhoto == null) {
                         _uiState.update {
@@ -145,7 +145,7 @@ class QuizViewModel
                     result = true
                 } else {
                     player.hearts--
-                    if (player.hearts == 2) startTimerUseCase(600000)
+                    if (player.hearts == 2) startHeartTimerUseCase(600000)
                     _uiState.update {
                         it.copy(player = player.copy(), answerCorrect = false)
                     }

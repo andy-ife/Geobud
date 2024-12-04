@@ -14,7 +14,7 @@ import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepoImpl
 import com.andyslab.geobud.data.repository.player.PlayerRepository
 import com.andyslab.geobud.domain.ObserveThemeChangesUseCase
-import com.andyslab.geobud.domain.StartTimerUseCase
+import com.andyslab.geobud.domain.StartHeartTimerUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,8 +93,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideTimerUseCase(): StartTimerUseCase {
-        return StartTimerUseCase()
+    fun provideTimerUseCase(): StartHeartTimerUseCase {
+        return StartHeartTimerUseCase()
     }
 
     @Provides

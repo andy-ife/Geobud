@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.player.PlayerRepository
 import com.andyslab.geobud.domain.ObserveThemeChangesUseCase
-import com.andyslab.geobud.domain.StartTimerUseCase
+import com.andyslab.geobud.domain.StartHeartTimerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -21,7 +21,7 @@ class MainViewModel
     @Inject
     constructor(
         private val playerRepo: PlayerRepository,
-        private val startTimerUseCase: StartTimerUseCase,
+        private val startHeartTimerUseCase: StartHeartTimerUseCase,
     ) : ViewModel() {
         private val _themeState = MutableStateFlow<Boolean?>(null)
         val themeState = _themeState.asLiveData()
@@ -69,7 +69,7 @@ class MainViewModel
                     }
                     val timeLeft = player.timeLeftTillNextHeart
                     val newTimeLeft = (timeLeft - timeSinceLastSession) % 600000
-                    startTimerUseCase(newTimeLeft)
+                    startHeartTimerUseCase(newTimeLeft)
                 }
             }
         }

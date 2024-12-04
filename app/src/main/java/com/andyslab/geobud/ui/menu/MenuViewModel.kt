@@ -6,7 +6,7 @@ import com.andyslab.geobud.data.model.Player
 import com.andyslab.geobud.data.repository.landmark.LandmarkRepository
 import com.andyslab.geobud.data.repository.player.PlayerRepository
 import com.andyslab.geobud.domain.ObserveThemeChangesUseCase
-import com.andyslab.geobud.domain.StartTimerUseCase
+import com.andyslab.geobud.domain.StartHeartTimerUseCase
 import com.andyslab.geobud.utils.Resource
 import com.andyslab.geobud.utils.timeMillisToString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +36,7 @@ class MenuViewModel
         init {
             load()
             viewModelScope.launch {
-                StartTimerUseCase.millisLeft.asSharedFlow().collect { millisLeft ->
+                StartHeartTimerUseCase.millisLeft.asSharedFlow().collect { millisLeft ->
                     player.timeLeftTillNextHeart = millisLeft
                     if (_uiState.value is MenuUiState.Success) {
                         _uiState.update {

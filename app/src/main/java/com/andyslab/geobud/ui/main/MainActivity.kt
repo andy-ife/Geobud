@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.work.BackoffPolicy
-import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.andyslab.geobud.ui.nav.RootNavGraph
@@ -25,16 +24,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val workConstraints =
-            Constraints
-                .Builder()
-                .setRequiresBatteryNotLow(true)
-                .build()
-
         val worker =
             OneTimeWorkRequestBuilder<FetchPhotosWorker>()
                 .setInitialDelay(Duration.ofSeconds(10))
-                .setConstraints(workConstraints)
                 .setBackoffCriteria(
                     backoffPolicy = BackoffPolicy.EXPONENTIAL,
                     duration = Duration.ofSeconds(10),

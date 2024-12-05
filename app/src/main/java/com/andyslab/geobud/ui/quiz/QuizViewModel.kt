@@ -159,31 +159,32 @@ class QuizViewModel
                             it.copy(answerCorrect = null)
                         }
                     }
-                    combo=0
+                    combo = 0
                 }
             }
             return result
         }
 
         fun generateExclamation(): String {
-            return if (combo > 2)
+            return if (combo > 2) {
                 setOf(
-                "Nice!",
-                "Great job!",
-                "You're on fire!",
-                "Amazing!",
-                "Great!",
-                "Cool!",
-                "Geo-master!",
-                "Globetrotter!",
-            ).random()
-            else
+                    "Nice!",
+                    "Great job!",
+                    "You're on fire!",
+                    "Amazing!",
+                    "Great!",
+                    "Cool!",
+                    "Geo-master!",
+                    "Globetrotter!",
+                ).random()
+            } else {
                 setOf(
                     "Nice!",
                     "Great job!",
                     "Great!",
                     "Cool!",
                 ).random()
+            }
         }
 
         fun savePhoto(

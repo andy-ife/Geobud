@@ -54,7 +54,7 @@ class LandmarkRepoImpl
                                 )
                             if (response.isSuccessful && response.body() != null) {
                                 val photo =
-                                    response.body()?.photos!!.let { photos ->
+                                    response.body()?.photos?.let { photos ->
                                         if (photos.size >= 4) {
                                             photos.filter {
                                                 it.alt.lowercase().contains(landmark.name.split(" ").first())
@@ -62,7 +62,7 @@ class LandmarkRepoImpl
                                         } else {
                                             photos.first()
                                         }
-                                    }
+                                    } ?: throw NullPointerException("response body or photos list is null")
 
                                 landmark =
                                     landmark.copy(
@@ -81,6 +81,7 @@ class LandmarkRepoImpl
                                 Resource.Error(e.message.toString()),
                             ) // "Couldn't fetch photos. Check your internet connection and try again."
                             Log.d("Error fetching photos", e.message.toString())
+                            e.printStackTrace()
                             return@flow
                         }
                     }

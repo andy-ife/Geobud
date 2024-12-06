@@ -1,5 +1,8 @@
 package com.andyslab.geobud.data.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class Player(
     var progress: Int = 0,
     var currentLandmark: Landmark? = null,

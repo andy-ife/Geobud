@@ -1,5 +1,10 @@
 ## Issues
-Please name issues use a prefix with the issue type enclosed in square brackets, followed by a short title for the issue. For example:
+Please name issues using the following convention:
+
+```
+[<issue_type>] <issue_name>
+```
+For example:
 
 ```
 [bug] app crashing

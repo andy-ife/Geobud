@@ -1,9 +1,11 @@
 package com.andyslab.geobud.data.model
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+@Keep
 @Entity(
     tableName = "landmark",
     indices = [Index(value = ["id"], name = "id", unique = true, orders = [Index.Order.ASC])],

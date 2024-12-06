@@ -1,6 +1,9 @@
 package com.andyslab.geobud.data.remote
 
+import androidx.annotation.Keep
+
 // Class representing a JSON response from pexels API.
+@Keep
 data class LandmarkPhotoDto(
     val next_page: String,
     val page: Int,
@@ -9,6 +12,7 @@ data class LandmarkPhotoDto(
     val total_results: Int,
 )
 
+@Keep
 data class PhotoDto(
     val alt: String,
     val avg_color: String,
@@ -23,6 +27,7 @@ data class PhotoDto(
     val width: Int,
 )
 
+@Keep
 data class SrcDto(
     val landscape: String,
     val large: String,

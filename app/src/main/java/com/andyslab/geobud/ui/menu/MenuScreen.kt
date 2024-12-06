@@ -317,6 +317,7 @@ fun MenuScreen(
                             .border(2.dp, MaterialTheme.colorScheme.outline, RectangleShape),
                     color = MaterialTheme.colorScheme.outlineVariant,
                     trackColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    gapSize = -300.dp,
                     drawStopIndicator = {},
                 )
 

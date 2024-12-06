@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="/screenshots/geobud_logo.svg" alt="Project logo"></a>
+ <img width=200px height=200px src="/images/geobud_logo.svg" alt="Project logo"></a>
 </p>
 
 <h3 align="center">Geobud</h3>
@@ -22,9 +22,9 @@ Geobud is a simple fun geography quiz app that lets you guess countries from the
 </p>
 
 <div>
-<img src="/screenshots/app_screen1.jpg" width="300px" alt="App Screen 1" style="margin-right: 20px;"></img>
-<img src="/screenshots/app_screen2.jpg" width="300px" alt="App Screen 2" style="margin-right: 20px;"></img>
-<img src="/screenshots/app_screen3.jpg" width="300px" alt="App Screen 3"></img>
+<img src="/images/app_screen1.jpg" width="300px" alt="App Screen 1" style="margin-right: 20px;"></img>
+<img src="/images/app_screen2.jpg" width="300px" alt="App Screen 2" style="margin-right: 20px;"></img>
+<img src="/images/app_screen3.jpg" width="300px" alt="App Screen 3"></img>
 <br><br>
 </div>
 
@@ -46,7 +46,7 @@ Geobud combines education and entertainment, providing the following unique feat
 - Guess countries based on photos of places and famous landmarks. ✈️
 - Save your favorite photos to your phone storage. ⬇️
 - Limited offline capability with photo caching.
-- Browse the history of all past photos and locations. 🖼️
+- Browse the history of all your past photos and locations. 🖼️
 - Dark and light mode. 🌓
 - Single activity design.
 - Clean and simple Jetpack Compose UI.
@@ -55,7 +55,7 @@ Geobud combines education and entertainment, providing the following unique feat
 ## 🏁 Installation <a name = "installation"></a>
 
 ### Release apk
-If you simply want to install the app, get the release apk <a href="#">here.</a>
+If you simply want to install the app, get the release apk <a href="https://github.com/andy-ife/Geobud/releases">here.</a>
 
 ### Building from source
 
@@ -95,6 +95,6 @@ Please read through [CONTRIBUTING.md](./CONTRIBUTING.md) if you would like to co
 See also the list of [contributors](https://github.com/andy-ife/Geobud/contributors) who participated in this project.
 
 ## 🙏 Thanks <a name = "thanks"></a>
-- [Pexels](https://www.pexels.com/api/) for providing a reliable REST API, where all photos used in this application come from.
+- [Pexels](https://www.pexels.com/api/) for their REST API, where all photos used in this application come from.
 - [Reshot](https://www.reshot.com/) for the app icon.
 - [SVG Repo](https://www.svgrepo.com/) for icons.

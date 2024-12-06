@@ -13,6 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-/release
+/app/release
+/app/build
 /schema
 /.kotlin

@@ -46,7 +46,7 @@ Geobud combines education and entertainment, providing the following unique feat
 - Guess countries based on photos of places and famous landmarks. ✈️
 - Save your favorite photos to your phone storage. ⬇️
 - Limited offline capability with photo caching.
-- Browse the history of all your past photos and locations. 🖼️
+- Browse the history of all your past photos and locations. 🖼️ (Coming soon)
 - Dark and light mode. 🌓
 - Single activity design.
 - Clean and simple Jetpack Compose UI.

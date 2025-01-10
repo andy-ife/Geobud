@@ -8,18 +8,19 @@
     <clip-path
         android:pathData="M0,0h360v800h-360z"/>
     <path
-        android:pathData="M360,0H0V800H360V0Z">
-      <aapt:attr name="android:fillColor">
-        <gradient 
-            android:startX="180"
-            android:startY="400"
-            android:endX="180"
-            android:endY="800"
-            android:type="linear">
-          <item android:offset="0" android:color="#222222"/>
-          <item android:offset="1" android:color="#212721"/>
-        </gradient>
-      </aapt:attr>
+        android:pathData="M360,0H0V800H360V0Z"
+        android:fillColor="#030d17">
+<!--      <aapt:attr name="android:fillColor">-->
+<!--        <gradient -->
+<!--            android:startX="180"-->
+<!--            android:startY="400"-->
+<!--            android:endX="180"-->
+<!--            android:endY="800"-->
+<!--            android:type="linear">-->
+<!--          <item android:offset="0" android:color="#222222"/>-->
+<!--          <item android:offset="1" android:color="#212721"/>-->
+<!--        </gradient>-->
+<!--      </aapt:attr>-->
     </path>
     <path
         android:pathData="M126,0C111.9,5.5 97.8,11 91.6,16.1C85.4,21.3 87,26.1 89.3,32.5C91.5,38.9 94.3,46.8 96.1,55.5C98,64.2 98.9,73.6 95.8,80.3C92.6,87.1 85.4,91.3 77.1,91.9C68.8,92.6 59.5,89.7 53.5,92.7C47.5,95.6 45,104.3 40.4,110.9C35.7,117.5 29,121.9 21.9,124.1C14.8,126.3 7.4,126.1 0,126V0H126Z"
